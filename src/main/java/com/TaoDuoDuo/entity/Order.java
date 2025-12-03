@@ -7,35 +7,35 @@ public class Order {
     private int user_id;
     private int shop_id;
     private String order_status;
-    private double order_amount;
+    private double total_amount;
     private LocalDateTime create_time;
     private LocalDateTime update_time;
 
     public Order() {
     }
 
-    public Order(int user_id, int shop_id, String order_status, double order_amount, LocalDateTime create_time, LocalDateTime update_time) {
+    public Order(int user_id, int shop_id, String order_status, double total_amount, LocalDateTime create_time, LocalDateTime update_time) {
         this.user_id = user_id;
         this.shop_id = shop_id;
         this.order_status = order_status;
-        this.order_amount = order_amount;
+        this.total_amount = total_amount;
         this.create_time = create_time;
         this.update_time = update_time;
     }
 
-    public Order(int user_id, int shop_id, String order_status, double order_amount) {
+    public Order(int user_id, int shop_id, String order_status, double total_amount) {
         this.user_id = user_id;
         this.shop_id = shop_id;
         this.order_status = order_status;
-        this.order_amount = order_amount;
+        this.total_amount = total_amount;
     }
 
-    public Order(int order_id, int user_id, int shop_id, String order_status, double order_amount, LocalDateTime create_time, LocalDateTime update_time) {
+    public Order(int order_id, int user_id, int shop_id, String order_status, double total_amount, LocalDateTime create_time, LocalDateTime update_time) {
         this.order_id = order_id;
         this.user_id = user_id;
         this.shop_id = shop_id;
         this.order_status = order_status;
-        this.order_amount = order_amount;
+        this.total_amount = total_amount;
         this.create_time = create_time;
         this.update_time = update_time;
     }
@@ -72,12 +72,12 @@ public class Order {
         this.order_status = order_status;
     }
 
-    public double getOrder_amount() {
-        return order_amount;
+    public double getTotal_amount() {
+        return total_amount;
     }
 
-    public void setOrder_amount(double order_amount) {
-        this.order_amount = order_amount;
+    public void setTotal_amount(double total_amount) {
+        this.total_amount = total_amount;
     }
 
     public LocalDateTime getCreate_time() {
