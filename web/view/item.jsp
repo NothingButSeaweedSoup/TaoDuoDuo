@@ -245,32 +245,57 @@
                   .num_of_product {
                     width: 520px;
                     height: 60px;
-                    overflow: hidden;
                     position: absolute;
                     left: 0px;
                     top: 0px;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    background: #fff;
+                    border: 1px solid #d9d9d9;
                     border-radius: 10px;
+                    padding: 0 20px;
+                    transition: all 0.3s;
+                  }
+
+                  .num_of_product:focus-within {
+                    border-color: #40a9ff;
+                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+                  }
+
+                  .num_of_product label {
+                    font-size: 15px;
+                    color: #595959;
+                    white-space: nowrap;
+                    font-weight: 500;
                   }
 
                   .num_of_product input {
-                    width: 100%;
-                    height: 100%;
-                    padding: 0 15px;
-                    border: 1px solid #d9d9d9;
-                    border-radius: 10px;
+                    flex: 1;
+                    height: 40px;
+                    padding: 0 12px;
+                    border: 1px solid #e8e8e8;
+                    border-radius: 6px;
                     font-size: 15px;
                     box-sizing: border-box;
                     transition: all 0.3s;
+                    min-width: 80px;
                   }
 
                   .num_of_product input:focus {
                     outline: none;
                     border-color: #40a9ff;
-                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
                   }
 
                   .num_of_product input::placeholder {
                     color: #bfbfbf;
+                  }
+
+                  .total_price_display {
+                    font-size: 18px;
+                    color: #ff6b35;
+                    font-weight: 600;
+                    white-space: nowrap;
                   }
 
                   .add_cart {
@@ -475,10 +500,16 @@
                   </div>
 
                   <!-- 表单 -->
-                  <form id="form" class="form" method="post" action="">
+                  <form id="form" class="form" method="post" action="<%= request.getContextPath() %>/PaymentServlet">
+                    <input type="hidden" name="productId" value="<%= product != null ? product.getProduct_id() : "" %>">
+                    <input type="hidden" id="unitPrice" value="<%= product != null ? product.getPrice() : 0 %>">
                     <div id="num_of_product" class="num_of_product">
-                      <input type="text" name="quantity" id="quantity" placeholder="请输入购买数量" pattern="[1-9][0-9]*"
-                        value="1" required>
+                      <label for="quantity">数量</label>
+                      <input type="text" name="quantity" id="quantity" placeholder="1" pattern="[1-9][0-9]*" value="1"
+                        required>
+                      <span class="total_price_display">总价：¥<span id="totalPrice">
+                          <%= product !=null ? String.format("%.2f", product.getPrice()) : "0.00" %>
+                        </span></span>
                     </div>
                     <button type="button" id="add_cart" class="add_cart">加入购物车</button>
                     <button type="submit" id="submit" class="submit">立即购买</button>
@@ -590,9 +621,22 @@
                     updateButtons();
                   })();
 
-                  // 限制输入为自然数（正整数：1, 2, 3, ...）
+                  // 实时计算总价和限制输入为自然数
                   document.addEventListener('DOMContentLoaded', function () {
                     const quantityInput = document.getElementById('quantity');
+                    const totalPriceSpan = document.getElementById('totalPrice');
+                    const unitPriceInput = document.getElementById('unitPrice');
+
+                    // 计算总价的函数
+                    function updateTotalPrice() {
+                      const quantity = parseInt(quantityInput.value) || 0;
+                      const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                      const totalPrice = (quantity * unitPrice).toFixed(2);
+                      if (totalPriceSpan) {
+                        totalPriceSpan.textContent = totalPrice;
+                      }
+                    }
+
                     if (quantityInput) {
                       quantityInput.addEventListener('input', function (e) {
                         // 只允许数字
@@ -606,6 +650,9 @@
                           value = '';
                         }
                         this.value = value;
+
+                        // 实时更新总价
+                        updateTotalPrice();
                       });
 
                       quantityInput.addEventListener('keypress', function (e) {
@@ -621,6 +668,45 @@
                         const numbersOnly = paste.replace(/[^\d]/g, '');
                         if (numbersOnly && parseInt(numbersOnly) > 0) {
                           this.value = parseInt(numbersOnly).toString();
+                          updateTotalPrice();
+                        }
+                      });
+
+                      // 页面加载时计算一次总价
+                      updateTotalPrice();
+                    }
+
+                    // 支付表单提交前确认
+                    const paymentForm = document.getElementById('form');
+                    if (paymentForm) {
+                      paymentForm.addEventListener('submit', function (e) {
+                        const quantity = parseInt(document.getElementById('quantity').value);
+                        const stock = <%= product != null ? product.getStock() : 0 %>;
+                        const totalPrice = document.getElementById('totalPrice').textContent;
+
+                        // 验证数量
+                        if (!quantity || quantity <= 0) {
+                          e.preventDefault();
+                          alert('请输入有效的购买数量');
+                          return false;
+                        }
+
+                        // 验证库存
+                        if (quantity > stock) {
+                          e.preventDefault();
+                          alert('购买数量超过库存！当前库存：' + stock);
+                          return false;
+                        }
+
+                        // 确认支付
+                        const confirmed = confirm(
+                          '确认支付 ¥' + totalPrice + ' 吗？\n\n' +
+                          '点击确定将跳转到支付宝支付页面'
+                        );
+
+                        if (!confirmed) {
+                          e.preventDefault();
+                          return false;
                         }
                       });
                     }
