@@ -1,0 +1,631 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+  <%@ page import="com.TaoDuoDuo.entity.*" %>
+    <%@ page import="java.util.List" %>
+      <% Product product=(Product) request.getAttribute("product"); List<ProductImage> productImages = (List
+        <ProductImage>) request.getAttribute("productImages");
+          Shop shop = (Shop) request.getAttribute("shop");
+          List<Review> reviews = (List<Review>) request.getAttribute("reviews");
+              String productName = product != null ? product.getProduct_name() : "商品详情";
+              %>
+              <!DOCTYPE html>
+              <html lang="zh-CN">
+
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>
+                  <%= productName %>
+                </title>
+                <style>
+                  * {
+                    box-sizing: border-box;
+                  }
+
+                  html {
+                    width: 100%;
+                    height: 100%;
+                  }
+
+                  body {
+                    width: 100%;
+                    min-height: 100%;
+                    margin: 0;
+                    padding: 40px 20px;
+                    background-color: #f5f5f5;
+                    display: flex;
+                    justify-content: center;
+                    align-items: flex-start;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+                  }
+
+                  span {
+                    word-break: break-word;
+                  }
+
+                  .main-container {
+                    position: relative;
+                    width: 1440px;
+                    max-width: 100%;
+                    min-height: 900px;
+                    margin: 0 auto;
+                  }
+
+                  .img_main {
+                    width: 480px;
+                    height: 480px;
+                    overflow: hidden;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    background-color: #fff;
+                    border-radius: 12px;
+                    border: 1px solid #e8e8e8;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                  }
+
+                  .img_main img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+
+                  .img_list_container {
+                    width: 480px;
+                    position: absolute;
+                    left: 0;
+                    top: 510px;
+                    overflow: hidden;
+                  }
+
+                  .img_list {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 12px;
+                    align-items: flex-start;
+                    transition: transform 0.3s ease;
+                  }
+
+                  .img_list_wrapper {
+                    position: relative;
+                  }
+
+                  .img_item {
+                    width: 85px;
+                    height: 85px;
+                    overflow: hidden;
+                    position: relative;
+                    flex-shrink: 0;
+                    background-color: #fff;
+                    border: 1px solid #e8e8e8;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                  }
+
+                  .img_item:hover {
+                    border-color: #40a9ff;
+                    box-shadow: 0 2px 8px rgba(64, 169, 255, 0.2);
+                  }
+
+                  .img_item img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+
+                  .img_item.active {
+                    border: 2px solid #1890ff;
+                    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+                  }
+
+                  .img_scroll_button {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 30px;
+                    height: 30px;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                    transition: background-color 0.3s;
+                  }
+
+                  .img_scroll_button:hover {
+                    background-color: rgba(0, 0, 0, 0.7);
+                  }
+
+                  .img_scroll_button.prev {
+                    left: 10px;
+                  }
+
+                  .img_scroll_button.next {
+                    right: 10px;
+                  }
+
+                  .img_scroll_button.hidden {
+                    display: none;
+                  }
+
+                  .product_info {
+                    width: 520px;
+                    height: auto;
+                    position: absolute;
+                    left: 50%;
+                    margin-left: -200px;
+                    top: 0;
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    gap: 28px 24px;
+                    align-content: flex-start;
+                    align-items: flex-start;
+                  }
+
+                  .product_name {
+                    width: 520px;
+                    min-height: 100px;
+                    overflow: hidden;
+                    position: relative;
+                    flex-shrink: 0;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: #262626;
+                    line-height: 1.4;
+                    border: 1px solid #e8e8e8;
+                  }
+
+                  .product_description {
+                    width: 520px;
+                    min-height: 150px;
+                    overflow: hidden;
+                    position: relative;
+                    flex-shrink: 0;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    padding: 20px;
+                    font-size: 14px;
+                    line-height: 1.8;
+                    color: #595959;
+                    border: 1px solid #e8e8e8;
+                  }
+
+                  .product_price {
+                    width: 248px;
+                    height: 60px;
+                    overflow: hidden;
+                    position: relative;
+                    flex-shrink: 0;
+                    border-radius: 10px;
+                    background-color: #fff5f0;
+                    padding: 15px;
+                    display: flex;
+                    align-items: center;
+                    font-size: 24px;
+                    color: #ff6b35;
+                    font-weight: 600;
+                    border: 1px solid #ffe7d9;
+                  }
+
+                  .product_stock {
+                    width: 248px;
+                    height: 60px;
+                    overflow: hidden;
+                    position: relative;
+                    flex-shrink: 0;
+                    border-radius: 10px;
+                    background-color: #fff;
+                    padding: 15px;
+                    display: flex;
+                    align-items: center;
+                    font-size: 14px;
+                    color: #595959;
+                    border: 1px solid #e8e8e8;
+                  }
+
+                  .form {
+                    width: 520px;
+                    height: 150px;
+                    position: absolute;
+                    left: 50%;
+                    margin-left: -200px;
+                    top: 400px;
+                  }
+
+                  .num_of_product {
+                    width: 520px;
+                    height: 60px;
+                    overflow: hidden;
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
+                    border-radius: 10px;
+                  }
+
+                  .num_of_product input {
+                    width: 100%;
+                    height: 100%;
+                    padding: 0 15px;
+                    border: 1px solid #d9d9d9;
+                    border-radius: 10px;
+                    font-size: 15px;
+                    box-sizing: border-box;
+                    transition: all 0.3s;
+                  }
+
+                  .num_of_product input:focus {
+                    outline: none;
+                    border-color: #40a9ff;
+                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+                  }
+
+                  .num_of_product input::placeholder {
+                    color: #bfbfbf;
+                  }
+
+                  .add_cart {
+                    width: 260px;
+                    height: 60px;
+                    overflow: hidden;
+                    position: absolute;
+                    left: 0px;
+                    top: 90px;
+                    border-radius: 10px 0px 0px 10px;
+                    background-color: #fff;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    border: 1px solid #ff6b35;
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #ff6b35;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+
+                  .add_cart:hover {
+                    background-color: #fff5f0;
+                    border-color: #ff8c5a;
+                    color: #ff8c5a;
+                  }
+
+                  .submit {
+                    width: 260px;
+                    height: 60px;
+                    overflow: hidden;
+                    position: absolute;
+                    left: 260px;
+                    top: 90px;
+                    border-radius: 0px 10px 10px 0px;
+                    background-color: #ff6b35;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    border: 1px solid #ff6b35;
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #fff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+
+                  .submit:hover {
+                    background-color: #ff8c5a;
+                    border-color: #ff8c5a;
+                    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+                  }
+
+                  .shop_name {
+                    width: 340px;
+                    min-height: 100px;
+                    overflow: hidden;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #262626;
+                    border: 1px solid #e8e8e8;
+                  }
+
+                  .product_reviews {
+                    width: 340px;
+                    min-height: 420px;
+                    overflow-y: auto;
+                    position: absolute;
+                    right: 0;
+                    top: 120px;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    padding: 20px;
+                    border: 1px solid #e8e8e8;
+                  }
+
+                  .product_reviews::-webkit-scrollbar {
+                    width: 6px;
+                  }
+
+                  .product_reviews::-webkit-scrollbar-thumb {
+                    background-color: #d9d9d9;
+                    border-radius: 3px;
+                  }
+
+                  .product_reviews::-webkit-scrollbar-thumb:hover {
+                    background-color: #bfbfbf;
+                  }
+
+                  .review_item {
+                    margin-bottom: 15px;
+                    padding: 15px;
+                    background-color: #fafafa;
+                    border-radius: 8px;
+                    border: 1px solid #f0f0f0;
+                  }
+
+                  .review_item:last-child {
+                    margin-bottom: 0;
+                  }
+
+                  .review_rating {
+                    color: #faad14;
+                    margin-bottom: 8px;
+                    font-size: 16px;
+                  }
+
+                  .review_content {
+                    font-size: 13px;
+                    line-height: 1.6;
+                    color: #595959;
+                  }
+
+                  .review_time {
+                    font-size: 12px;
+                    color: #8c8c8c;
+                    margin-top: 8px;
+                  }
+
+                  .container>* {
+                    width: 100%;
+                    height: 100%;
+                  }
+
+                  @media (max-width: 1500px) {
+                    .main-container {
+                      max-width: 100%;
+                      transform: scale(0.95);
+                      transform-origin: top center;
+                    }
+                  }
+
+                  @media (max-width: 1280px) {
+                    .main-container {
+                      transform: scale(0.85);
+                    }
+                  }
+
+                  @media (max-width: 1024px) {
+                    .main-container {
+                      transform: scale(0.75);
+                    }
+                  }
+                </style>
+              </head>
+
+              <body>
+                <div class="main-container">
+                  <!-- 主图 -->
+                  <div id="img_main" class="img_main">
+                    <% if (productImages !=null && !productImages.isEmpty()) { %>
+                      <img src="<%= request.getContextPath() + productImages.get(0).getImage_url() %>" alt="商品主图"
+                        id="mainImage">
+                      <% } %>
+                  </div>
+
+                  <!-- 图片列表 -->
+                  <div class="img_list_container">
+                    <% if (productImages !=null && productImages.size()> 5) { %>
+                      <button class="img_scroll_button prev" id="prevBtn">‹</button>
+                      <% } %>
+                        <div id="img_list" class="img_list">
+                          <% if (productImages !=null && !productImages.isEmpty()) { %>
+                            <% for (int i=0; i < productImages.size(); i++) { %>
+                              <div class="img_item <%= i == 0 ? " active" : "" %>" data-image-url="<%=
+                                  request.getContextPath() + productImages.get(i).getImage_url() %>">
+                                  <img src="<%= request.getContextPath() + productImages.get(i).getImage_url() %>"
+                                    alt="商品图片<%= i + 1 %>">
+                              </div>
+                              <% } %>
+                                <% } %>
+                        </div>
+                        <% if (productImages !=null && productImages.size()> 5) { %>
+                          <button class="img_scroll_button next" id="nextBtn">›</button>
+                          <% } %>
+                  </div>
+
+
+                  <!-- 商品信息 -->
+                  <div id="product_info" class="product_info">
+                    <% if (product !=null) { %>
+                      <div id="product_name" class="product_name">
+                        <%= product.getProduct_name() %>
+                      </div>
+                      <div id="product_description" class="product_description">
+                        <%= product.getDescription() !=null ? product.getDescription() : "" %>
+                      </div>
+                      <div id="product_price" class="product_price">¥<%= String.format("%.2f", product.getPrice()) %>
+                      </div>
+                      <div id="product_stock" class="product_stock">库存：<%= product.getStock() %>
+                      </div>
+                      <% } %>
+                  </div>
+
+                  <!-- 表单 -->
+                  <form id="form" class="form" method="post" action="">
+                    <div id="num_of_product" class="num_of_product">
+                      <input type="text" name="quantity" id="quantity" placeholder="请输入购买数量" pattern="[1-9][0-9]*"
+                        value="1" required>
+                    </div>
+                    <button type="button" id="add_cart" class="add_cart">加入购物车</button>
+                    <button type="submit" id="submit" class="submit">立即购买</button>
+                  </form>
+
+                  <!-- 店铺名称 -->
+                  <div id="shop_name" class="shop_name">
+                    <% if (shop !=null) { %>
+                      <%= shop.getShop_name() %>
+                        <% } %>
+                  </div>
+
+                  <!-- 商品评价 -->
+                  <div id="product_reviews" class="product_reviews">
+                    <% if (reviews !=null && !reviews.isEmpty()) { %>
+                      <% for (Review review : reviews) { %>
+                        <div class="review_item">
+                          <div class="review_rating">
+                            <% for (int i=0; i < review.getRating(); i++) { %>
+                              ★
+                              <% } %>
+                          </div>
+                          <div class="review_content">
+                            <%= review.getContent() %>
+                          </div>
+                          <% if (review.getCreate_time() !=null) { %>
+                            <div class="review_time">
+                              <%= review.getCreate_time() %>
+                            </div>
+                            <% } %>
+                        </div>
+                        <% } %>
+                          <% } else { %>
+                            <div>暂无评价</div>
+                            <% } %>
+                  </div>
+                </div>
+
+                <script>
+                  // 图片列表滑动功能
+                  (function () {
+                    const imgList = document.getElementById('img_list');
+                    const prevBtn = document.getElementById('prevBtn');
+                    const nextBtn = document.getElementById('nextBtn');
+                    const imgItems = document.querySelectorAll('.img_item');
+                    const mainImage = document.getElementById('mainImage');
+
+                    if (!imgList || imgItems.length === 0) return;
+
+                    let currentIndex = 0;
+                    const itemsPerPage = 5;
+                    const totalPages = Math.ceil(imgItems.length / itemsPerPage);
+                    const itemWidth = 85 + 12; // 图片宽度 + gap
+
+                    // 点击小图切换主图
+                    imgItems.forEach((item, index) => {
+                      item.addEventListener('click', function () {
+                        // 移除所有active类
+                        imgItems.forEach(img => img.classList.remove('active'));
+                        // 添加active类到当前项
+                        this.classList.add('active');
+                        // 更新主图
+                        if (mainImage) {
+                          mainImage.src = this.getAttribute('data-image-url');
+                        }
+                      });
+                    });
+
+                    // 如果没有超过5张图片，不需要滑动功能
+                    if (imgItems.length <= itemsPerPage) {
+                      if (prevBtn) prevBtn.classList.add('hidden');
+                      if (nextBtn) nextBtn.classList.add('hidden');
+                      return;
+                    }
+
+                    // 更新按钮状态
+                    function updateButtons() {
+                      if (prevBtn) {
+                        prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+                      }
+                      if (nextBtn) {
+                        nextBtn.style.display = currentIndex >= totalPages - 1 ? 'none' : 'flex';
+                      }
+                    }
+
+                    // 滑动到指定页
+                    function scrollToPage(pageIndex) {
+                      currentIndex = Math.max(0, Math.min(pageIndex, totalPages - 1));
+                      const translateX = -currentIndex * itemsPerPage * itemWidth;
+                      imgList.style.transform = `translateX(${translateX}px)`;
+                      updateButtons();
+                    }
+
+                    // 上一页
+                    if (prevBtn) {
+                      prevBtn.addEventListener('click', function () {
+                        scrollToPage(currentIndex - 1);
+                      });
+                    }
+
+                    // 下一页
+                    if (nextBtn) {
+                      nextBtn.addEventListener('click', function () {
+                        scrollToPage(currentIndex + 1);
+                      });
+                    }
+
+                    // 初始化
+                    updateButtons();
+                  })();
+
+                  // 限制输入为自然数（正整数：1, 2, 3, ...）
+                  document.addEventListener('DOMContentLoaded', function () {
+                    const quantityInput = document.getElementById('quantity');
+                    if (quantityInput) {
+                      quantityInput.addEventListener('input', function (e) {
+                        // 只允许数字
+                        let value = this.value.replace(/[^\d]/g, '');
+                        // 移除前导零（除非只有一个0，但自然数不允许0，所以直接移除）
+                        if (value.length > 1 && value.startsWith('0')) {
+                          value = value.replace(/^0+/, '');
+                        }
+                        // 如果为空或为0，清空
+                        if (value === '' || value === '0') {
+                          value = '';
+                        }
+                        this.value = value;
+                      });
+
+                      quantityInput.addEventListener('keypress', function (e) {
+                        // 阻止输入非数字字符
+                        if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      });
+
+                      quantityInput.addEventListener('paste', function (e) {
+                        e.preventDefault();
+                        const paste = (e.clipboardData || window.clipboardData).getData('text');
+                        const numbersOnly = paste.replace(/[^\d]/g, '');
+                        if (numbersOnly && parseInt(numbersOnly) > 0) {
+                          this.value = parseInt(numbersOnly).toString();
+                        }
+                      });
+                    }
+                  });
+                </script>
+              </body>
+
+              </html>
