@@ -9,8 +9,7 @@ import java.util.Optional;
 public class ProductDetailService {
     public Optional<Product> getProductDetail(int product_id) {
         ProductDao productDao = new ProductDao();
-        Product product = productDao.getProductById(product_id).get();
-        return Optional.of(product);
+        return productDao.getProductById(product_id);
     }
 
     public Optional<List<Review>> getProductReviews(int product_id) {
@@ -35,8 +34,11 @@ public class ProductDetailService {
 
     public boolean checkStock(int product_id, int quantity) {
         ProductDao productDao = new ProductDao();
-        Product product = productDao.getProductById(product_id).get();
-        return product.getStock() >= quantity;
+        Optional<Product> productOpt = productDao.getProductById(product_id);
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+        return productOpt.get().getStock() >= quantity;
     }
 
     public boolean addToCart(int user_id, int product_id, int quantity) {

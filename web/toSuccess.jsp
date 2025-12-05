@@ -195,7 +195,8 @@
 
                     <div class="btn-group">
                         <a href="<%= request.getContextPath() %>/index.jsp" class="btn btn-primary">返回首页</a>
-                        <a href="javascript:history.back()" class="btn btn-secondary">继续购物</a>
+                        <a href="<%= request.getContextPath() %>/ProductDetailServlet?id=1"
+                            class="btn btn-secondary">继续购物</a>
                     </div>
         </div>
     </body>
