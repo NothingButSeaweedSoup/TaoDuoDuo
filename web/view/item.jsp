@@ -70,10 +70,17 @@
                   }
 
                   .img_list_container {
-                    width: 480px;
+                    width: 485px;
+                    height: 85px;
                     position: absolute;
                     left: 0;
                     top: 510px;
+                  }
+
+                  .img_list_wrapper {
+                    width: 100%;
+                    height: 100%;
+                    position: relative;
                     overflow: hidden;
                   }
 
@@ -463,23 +470,22 @@
 
                   <!-- 图片列表 -->
                   <div class="img_list_container">
-                    <% if (productImages !=null && productImages.size()> 5) { %>
-                      <button class="img_scroll_button prev" id="prevBtn">‹</button>
-                      <% } %>
-                        <div id="img_list" class="img_list">
-                          <% if (productImages !=null && !productImages.isEmpty()) { %>
-                            <% for (int i=0; i < productImages.size(); i++) { %>
-                              <div class="img_item <%= i == 0 ? " active" : "" %>" data-image-url="<%=
-                                  request.getContextPath() + productImages.get(i).getImage_url() %>">
+                    <div class="img_list_wrapper">
+                      <button class="img_scroll_button prev" id="prevBtn" style="display: none;">‹</button>
+                      <div id="img_list" class="img_list">
+                        <% if (productImages !=null && !productImages.isEmpty()) { %>
+                          <% for (int i=0; i < productImages.size(); i++) { %>
+                            <div class="img_item <%= i == 0 ? " active" : "" %>" data-image-url="<%=
+                                request.getContextPath() + productImages.get(i).getImage_url() %>" data-index="<%= i + 1
+                                  %>">
                                   <img src="<%= request.getContextPath() + productImages.get(i).getImage_url() %>"
                                     alt="商品图片<%= i + 1 %>">
-                              </div>
+                            </div>
+                            <% } %>
                               <% } %>
-                                <% } %>
-                        </div>
-                        <% if (productImages !=null && productImages.size()> 5) { %>
-                          <button class="img_scroll_button next" id="nextBtn">›</button>
-                          <% } %>
+                      </div>
+                      <button class="img_scroll_button next" id="nextBtn" style="display: none;">›</button>
+                    </div>
                   </div>
 
 
@@ -549,77 +555,6 @@
                 </div>
 
                 <script>
-                  // 图片列表滑动功能
-                  (function () {
-                    const imgList = document.getElementById('img_list');
-                    const prevBtn = document.getElementById('prevBtn');
-                    const nextBtn = document.getElementById('nextBtn');
-                    const imgItems = document.querySelectorAll('.img_item');
-                    const mainImage = document.getElementById('mainImage');
-
-                    if (!imgList || imgItems.length === 0) return;
-
-                    let currentIndex = 0;
-                    const itemsPerPage = 5;
-                    const totalPages = Math.ceil(imgItems.length / itemsPerPage);
-                    const itemWidth = 85 + 12; // 图片宽度 + gap
-
-                    // 点击小图切换主图
-                    imgItems.forEach((item, index) => {
-                      item.addEventListener('click', function () {
-                        // 移除所有active类
-                        imgItems.forEach(img => img.classList.remove('active'));
-                        // 添加active类到当前项
-                        this.classList.add('active');
-                        // 更新主图
-                        if (mainImage) {
-                          mainImage.src = this.getAttribute('data-image-url');
-                        }
-                      });
-                    });
-
-                    // 如果没有超过5张图片，不需要滑动功能
-                    if (imgItems.length <= itemsPerPage) {
-                      if (prevBtn) prevBtn.classList.add('hidden');
-                      if (nextBtn) nextBtn.classList.add('hidden');
-                      return;
-                    }
-
-                    // 更新按钮状态
-                    function updateButtons() {
-                      if (prevBtn) {
-                        prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
-                      }
-                      if (nextBtn) {
-                        nextBtn.style.display = currentIndex >= totalPages - 1 ? 'none' : 'flex';
-                      }
-                    }
-
-                    // 滑动到指定页
-                    function scrollToPage(pageIndex) {
-                      currentIndex = Math.max(0, Math.min(pageIndex, totalPages - 1));
-                      const translateX = -currentIndex * itemsPerPage * itemWidth;
-                      imgList.style.transform = `translateX(${translateX}px)`;
-                      updateButtons();
-                    }
-
-                    // 上一页
-                    if (prevBtn) {
-                      prevBtn.addEventListener('click', function () {
-                        scrollToPage(currentIndex - 1);
-                      });
-                    }
-
-                    // 下一页
-                    if (nextBtn) {
-                      nextBtn.addEventListener('click', function () {
-                        scrollToPage(currentIndex + 1);
-                      });
-                    }
-
-                    // 初始化
-                    updateButtons();
-                  })();
 
                   // 实时计算总价和限制输入为自然数
                   document.addEventListener('DOMContentLoaded', function () {
@@ -710,6 +645,97 @@
                         }
                       });
                     }
+
+                    // 图片切换功能
+                    const mainImage = document.getElementById('mainImage');
+                    const imgItems = document.querySelectorAll('.img_item');
+
+                    // 为每个缩略图添加点击事件
+                    imgItems.forEach(function (item) {
+                      item.addEventListener('click', function () {
+                        // 获取点击的图片URL
+                        const imageUrl = this.getAttribute('data-image-url');
+
+                        // 更新主图
+                        if (mainImage && imageUrl) {
+                          mainImage.src = imageUrl;
+                        }
+
+                        // 移除所有缩略图的active状态
+                        imgItems.forEach(function (img) {
+                          img.classList.remove('active');
+                        });
+
+                        // 给当前点击的缩略图添加active状态
+                        this.classList.add('active');
+                      });
+                    });
+
+                    // 缩略图滑动功能
+                    const imgList = document.getElementById('img_list');
+                    const prevBtn = document.getElementById('prevBtn');
+                    const nextBtn = document.getElementById('nextBtn');
+                    const imgListWrapper = document.querySelector('.img_list_wrapper');
+
+                    let currentScroll = 0;
+                    const scrollStep = 97; // 每次滚动一个缩略图的宽度 (85px + 12px gap)
+
+                    // 检查是否需要显示滚动按钮
+                    function updateScrollButtons() {
+                      if (!imgList || !imgListWrapper) return;
+
+                      const maxScroll = imgList.scrollWidth - imgListWrapper.clientWidth;
+
+                      // 如果内容宽度小于等于容器宽度，隐藏所有按钮
+                      if (maxScroll <= 0) {
+                        prevBtn.style.display = 'none';
+                        nextBtn.style.display = 'none';
+                        return;
+                      }
+
+                      // 显示/隐藏左按钮
+                      if (currentScroll <= 0) {
+                        prevBtn.style.display = 'none';
+                      } else {
+                        prevBtn.style.display = 'flex';
+                      }
+
+                      // 显示/隐藏右按钮
+                      if (currentScroll >= maxScroll) {
+                        nextBtn.style.display = 'none';
+                      } else {
+                        nextBtn.style.display = 'flex';
+                      }
+                    }
+
+                    // 向左滚动
+                    if (prevBtn) {
+                      prevBtn.addEventListener('click', function () {
+                        currentScroll = Math.max(0, currentScroll - scrollStep);
+                        imgList.style.transform = 'translateX(-' + currentScroll + 'px)';
+                        updateScrollButtons();
+                      });
+                    }
+
+                    // 向右滚动
+                    if (nextBtn) {
+                      nextBtn.addEventListener('click', function () {
+                        const maxScroll = imgList.scrollWidth - imgListWrapper.clientWidth;
+                        currentScroll = Math.min(maxScroll, currentScroll + scrollStep);
+                        imgList.style.transform = 'translateX(-' + currentScroll + 'px)';
+                        updateScrollButtons();
+                      });
+                    }
+
+                    // 初始化按钮状态
+                    updateScrollButtons();
+
+                    // 窗口大小改变时重新计算
+                    window.addEventListener('resize', function () {
+                      currentScroll = 0;
+                      imgList.style.transform = 'translateX(0)';
+                      updateScrollButtons();
+                    });
                   });
                 </script>
               </body>
