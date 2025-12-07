@@ -30,7 +30,7 @@
                     width: 100%;
                     min-height: 100%;
                     margin: 0;
-                    padding: 40px 20px;
+                    padding: 110px 20px 40px;
                     background-color: #f5f5f5;
                     display: flex;
                     justify-content: center;
@@ -277,16 +277,52 @@
                     font-weight: 500;
                   }
 
-                  .num_of_product input {
-                    flex: 1;
-                    height: 40px;
-                    padding: 0 12px;
+                  .quantity_control {
+                    display: flex;
+                    align-items: center;
+                    gap: 0;
                     border: 1px solid #e8e8e8;
                     border-radius: 6px;
+                    overflow: hidden;
+                  }
+
+                  .quantity_btn {
+                    width: 40px;
+                    height: 40px;
+                    border: none;
+                    background-color: #f5f5f5;
+                    color: #595959;
+                    font-size: 20px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+
+                  .quantity_btn:hover:not(:disabled) {
+                    background-color: #ff6b35;
+                    color: #fff;
+                  }
+
+                  .quantity_btn:disabled {
+                    background-color: #f5f5f5;
+                    color: #d9d9d9;
+                    cursor: not-allowed;
+                  }
+
+                  .num_of_product input {
+                    width: 80px;
+                    height: 40px;
+                    padding: 0 12px;
+                    border: none;
+                    border-left: 1px solid #e8e8e8;
+                    border-right: 1px solid #e8e8e8;
                     font-size: 15px;
+                    text-align: center;
                     box-sizing: border-box;
                     transition: all 0.3s;
-                    min-width: 80px;
                   }
 
                   .num_of_product input:focus {
@@ -491,319 +527,366 @@
               </head>
 
               <body>
-                <div class="main-container">
-                  <!-- 主图 -->
-                  <div id="img_main" class="img_main">
-                    <% if (productImages !=null && !productImages.isEmpty()) { %>
-                      <img src="<%= request.getContextPath() + productImages.get(0).getImage_url() %>" alt="商品主图"
-                        id="mainImage">
-                      <% } %>
-                  </div>
+                <!-- 导航栏 -->
+                <%@ include file="head.jsp" %>
 
-                  <!-- 图片列表 -->
-                  <div class="img_list_container">
-                    <div class="img_list_wrapper">
-                      <button class="img_scroll_button prev" id="prevBtn" style="display: none;">‹</button>
-                      <div id="img_list" class="img_list">
-                        <% if (productImages !=null && !productImages.isEmpty()) { %>
-                          <% for (int i=0; i < productImages.size(); i++) { %>
-                            <div class="img_item <%= i == 0 ? " active" : "" %>" data-image-url="<%=
-                                request.getContextPath() + productImages.get(i).getImage_url() %>" data-index="<%= i + 1
-                                  %>">
-                                  <img src="<%= request.getContextPath() + productImages.get(i).getImage_url() %>"
-                                    alt="商品图片<%= i + 1 %>">
-                            </div>
-                            <% } %>
-                              <% } %>
-                      </div>
-                      <button class="img_scroll_button next" id="nextBtn" style="display: none;">›</button>
-                    </div>
-                  </div>
-
-
-                  <!-- 商品信息 -->
-                  <div id="product_info" class="product_info">
-                    <% if (product !=null) { %>
-                      <div id="product_name" class="product_name">
-                        <%= product.getProduct_name() %>
-                      </div>
-                      <div id="product_description" class="product_description">
-                        <%= product.getDescription() !=null ? product.getDescription() : "" %>
-                      </div>
-                      <div id="product_price" class="product_price">¥<%= String.format("%.2f", product.getPrice()) %>
-                      </div>
-                      <div id="product_stock" class="product_stock">库存：<%= product.getStock() %>
-                      </div>
-                      <% } %>
-                  </div>
-
-                  <!-- 表单 -->
-                  <form id="form" class="form" method="post" action="<%= request.getContextPath() %>/PaymentServlet">
-                    <input type="hidden" name="productId" value="<%= product != null ? product.getProduct_id() : "" %>">
-                    <input type="hidden" id="unitPrice" value="<%= product != null ? product.getPrice() : 0 %>">
-                    <div id="num_of_product" class="num_of_product">
-                      <label for="quantity">数量</label>
-                      <input type="text" name="quantity" id="quantity" placeholder="1" pattern="[1-9][0-9]*" value="1"
-                        required>
-                      <span class="total_price_display">总价：¥<span id="totalPrice">
-                          <%= product !=null ? String.format("%.2f", product.getPrice()) : "0.00" %>
-                        </span></span>
-                    </div>
-                    <button type="button" id="add_cart" class="add_cart">加入购物车</button>
-                    <button type="submit" id="submit" class="submit">立即购买</button>
-                  </form>
-
-                  <!-- 店铺名称 -->
-                  <div id="shop_name" class="shop_name">
-                    <% if (shop !=null) { %>
-                      <%= shop.getShop_name() %>
+                  <div class="main-container">
+                    <!-- 主图 -->
+                    <div id="img_main" class="img_main">
+                      <% if (productImages !=null && !productImages.isEmpty()) { %>
+                        <img src="<%= request.getContextPath() + productImages.get(0).getImage_url() %>" alt="商品主图"
+                          id="mainImage">
                         <% } %>
-                  </div>
+                    </div>
 
-                  <!-- 商品评价 -->
-                  <div id="product_reviews" class="product_reviews">
-                    <% if (reviews !=null && !reviews.isEmpty()) { %>
-                      <% for (Review review : reviews) { %>
-                        <div class="review_item">
-                          <div class="review_rating">
-                            <% for (int i=0; i < review.getRating(); i++) { %>
-                              ★
+                    <!-- 图片列表 -->
+                    <div class="img_list_container">
+                      <div class="img_list_wrapper">
+                        <button class="img_scroll_button prev" id="prevBtn" style="display: none;">‹</button>
+                        <div id="img_list" class="img_list">
+                          <% if (productImages !=null && !productImages.isEmpty()) { %>
+                            <% for (int i=0; i < productImages.size(); i++) { %>
+                              <div class="img_item <%= i == 0 ? " active" : "" %>" data-image-url="<%=
+                                  request.getContextPath() + productImages.get(i).getImage_url() %>" data-index="<%= i +
+                                    1 %>">
+                                    <img src="<%= request.getContextPath() + productImages.get(i).getImage_url() %>"
+                                      alt="商品图片<%= i + 1 %>">
+                              </div>
                               <% } %>
-                          </div>
-                          <div class="review_content collapsed">
-                            <%= review.getContent() %>
-                          </div>
-                          <span class="review_expand_btn" style="display: none;">展开</span>
-                          <% if (review.getCreate_time() !=null) { %>
-                            <div class="review_time">
-                              <%= review.getCreate_time() %>
-                            </div>
-                            <% } %>
+                                <% } %>
+                        </div>
+                        <button class="img_scroll_button next" id="nextBtn" style="display: none;">›</button>
+                      </div>
+                    </div>
+
+
+                    <!-- 商品信息 -->
+                    <div id="product_info" class="product_info">
+                      <% if (product !=null) { %>
+                        <div id="product_name" class="product_name">
+                          <%= product.getProduct_name() %>
+                        </div>
+                        <div id="product_description" class="product_description">
+                          <%= product.getDescription() !=null ? product.getDescription() : "" %>
+                        </div>
+                        <div id="product_price" class="product_price">¥<%= String.format("%.2f", product.getPrice()) %>
+                        </div>
+                        <div id="product_stock" class="product_stock">库存：<%= product.getStock() %>
                         </div>
                         <% } %>
-                          <% } else { %>
-                            <div>暂无评价</div>
-                            <% } %>
+                    </div>
+
+                    <!-- 表单 -->
+                    <form id="form" class="form" method="post" action="<%= request.getContextPath() %>/PaymentServlet">
+                      <input type="hidden" name="productId"
+                        value="<%= product != null ? product.getProduct_id() : "" %>">
+                      <input type="hidden" id="unitPrice" value="<%= product != null ? product.getPrice() : 0 %>">
+                      <div id="num_of_product" class="num_of_product">
+                        <label for="quantity">数量</label>
+                        <div class="quantity_control">
+                          <button type="button" class="quantity_btn" id="decreaseBtn">−</button>
+                          <input type="text" name="quantity" id="quantity" placeholder="1" pattern="[1-9][0-9]*"
+                            value="1" required>
+                          <button type="button" class="quantity_btn" id="increaseBtn">+</button>
+                        </div>
+                        <span class="total_price_display">总价：¥<span id="totalPrice">
+                            <%= product !=null ? String.format("%.2f", product.getPrice()) : "0.00" %>
+                          </span></span>
+                      </div>
+                      <button type="button" id="add_cart" class="add_cart">加入购物车</button>
+                      <button type="submit" id="submit" class="submit">立即购买</button>
+                    </form>
+
+                    <!-- 店铺名称 -->
+                    <div id="shop_name" class="shop_name">
+                      <% if (shop !=null) { %>
+                        商家：<%= shop.getShop_name() %>
+                          <% } %>
+                    </div>
+
+                    <!-- 商品评价 -->
+                    <div id="product_reviews" class="product_reviews">
+                      <% if (reviews !=null && !reviews.isEmpty()) { %>
+                        <% for (Review review : reviews) { %>
+                          <div class="review_item">
+                            <div class="review_rating">
+                              <% for (int i=0; i < review.getRating(); i++) { %>
+                                ★
+                                <% } %>
+                            </div>
+                            <div class="review_content collapsed">
+                              <%= review.getContent() %>
+                            </div>
+                            <span class="review_expand_btn" style="display: none;">展开</span>
+                            <% if (review.getCreate_time() !=null) { %>
+                              <div class="review_time">
+                                <%= review.getCreate_time() %>
+                              </div>
+                              <% } %>
+                          </div>
+                          <% } %>
+                            <% } else { %>
+                              <div>暂无评价</div>
+                              <% } %>
+                    </div>
                   </div>
-                </div>
 
-                <script>
+                  <script>
 
-                  // 实时计算总价和限制输入为自然数
-                  document.addEventListener('DOMContentLoaded', function () {
-                    const quantityInput = document.getElementById('quantity');
-                    const totalPriceSpan = document.getElementById('totalPrice');
-                    const unitPriceInput = document.getElementById('unitPrice');
+                    // 实时计算总价和限制输入为自然数
+                    document.addEventListener('DOMContentLoaded', function () {
+                      const quantityInput = document.getElementById('quantity');
+                      const totalPriceSpan = document.getElementById('totalPrice');
+                      const unitPriceInput = document.getElementById('unitPrice');
+                      const decreaseBtn = document.getElementById('decreaseBtn');
+                      const increaseBtn = document.getElementById('increaseBtn');
+                      const stock = <%= product != null ? product.getStock() : 999 %>;
 
-                    // 计算总价的函数
-                    function updateTotalPrice() {
-                      const quantity = parseInt(quantityInput.value) || 0;
-                      const unitPrice = parseFloat(unitPriceInput.value) || 0;
-                      const totalPrice = (quantity * unitPrice).toFixed(2);
-                      if (totalPriceSpan) {
-                        totalPriceSpan.textContent = totalPrice;
+                      // 计算总价的函数
+                      function updateTotalPrice() {
+                        const quantity = parseInt(quantityInput.value) || 0;
+                        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                        const totalPrice = (quantity * unitPrice).toFixed(2);
+                        if (totalPriceSpan) {
+                          totalPriceSpan.textContent = totalPrice;
+                        }
                       }
-                    }
 
-                    if (quantityInput) {
-                      quantityInput.addEventListener('input', function (e) {
-                        // 只允许数字
-                        let value = this.value.replace(/[^\d]/g, '');
-                        // 移除前导零（除非只有一个0，但自然数不允许0，所以直接移除）
-                        if (value.length > 1 && value.startsWith('0')) {
-                          value = value.replace(/^0+/, '');
-                        }
-                        // 如果为空或为0，清空
-                        if (value === '' || value === '0') {
-                          value = '';
-                        }
-                        this.value = value;
+                      // 更新按钮状态
+                      function updateButtonState() {
+                        const quantity = parseInt(quantityInput.value) || 1;
+                        decreaseBtn.disabled = quantity <= 1;
+                        increaseBtn.disabled = quantity >= stock;
+                      }
 
-                        // 实时更新总价
-                        updateTotalPrice();
-                      });
+                      // 减少数量
+                      if (decreaseBtn) {
+                        decreaseBtn.addEventListener('click', function () {
+                          let quantity = parseInt(quantityInput.value) || 1;
+                          if (quantity > 1) {
+                            quantity--;
+                            quantityInput.value = quantity;
+                            updateTotalPrice();
+                            updateButtonState();
+                          }
+                        });
+                      }
 
-                      quantityInput.addEventListener('keypress', function (e) {
-                        // 阻止输入非数字字符
-                        if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                          e.preventDefault();
-                        }
-                      });
+                      // 增加数量
+                      if (increaseBtn) {
+                        increaseBtn.addEventListener('click', function () {
+                          let quantity = parseInt(quantityInput.value) || 1;
+                          if (quantity < stock) {
+                            quantity++;
+                            quantityInput.value = quantity;
+                            updateTotalPrice();
+                            updateButtonState();
+                          }
+                        });
+                      }
 
-                      quantityInput.addEventListener('paste', function (e) {
-                        e.preventDefault();
-                        const paste = (e.clipboardData || window.clipboardData).getData('text');
-                        const numbersOnly = paste.replace(/[^\d]/g, '');
-                        if (numbersOnly && parseInt(numbersOnly) > 0) {
-                          this.value = parseInt(numbersOnly).toString();
+                      if (quantityInput) {
+                        quantityInput.addEventListener('input', function (e) {
+                          // 只允许数字
+                          let value = this.value.replace(/[^\d]/g, '');
+                          // 移除前导零（除非只有一个0，但自然数不允许0，所以直接移除）
+                          if (value.length > 1 && value.startsWith('0')) {
+                            value = value.replace(/^0+/, '');
+                          }
+                          // 如果为空或为0，清空
+                          if (value === '' || value === '0') {
+                            value = '';
+                          }
+                          this.value = value;
+
+                          // 实时更新总价和按钮状态
                           updateTotalPrice();
-                        }
-                      });
-
-                      // 页面加载时计算一次总价
-                      updateTotalPrice();
-                    }
-
-                    // 支付表单提交前确认
-                    const paymentForm = document.getElementById('form');
-                    if (paymentForm) {
-                      paymentForm.addEventListener('submit', function (e) {
-                        const quantity = parseInt(document.getElementById('quantity').value);
-                        const stock = <%= product != null ? product.getStock() : 0 %>;
-                        const totalPrice = document.getElementById('totalPrice').textContent;
-
-                        // 验证数量
-                        if (!quantity || quantity <= 0) {
-                          e.preventDefault();
-                          alert('请输入有效的购买数量');
-                          return false;
-                        }
-
-                        // 验证库存
-                        if (quantity > stock) {
-                          e.preventDefault();
-                          alert('购买数量超过库存！当前库存：' + stock);
-                          return false;
-                        }
-
-                        // 确认支付
-                        const confirmed = confirm(
-                          '确认支付 ¥' + totalPrice + ' 吗？\n\n' +
-                          '点击确定将跳转到支付宝支付页面'
-                        );
-
-                        if (!confirmed) {
-                          e.preventDefault();
-                          return false;
-                        }
-                      });
-                    }
-
-                    // 图片切换功能
-                    const mainImage = document.getElementById('mainImage');
-                    const imgItems = document.querySelectorAll('.img_item');
-
-                    // 为每个缩略图添加点击事件
-                    imgItems.forEach(function (item) {
-                      item.addEventListener('click', function () {
-                        // 获取点击的图片URL
-                        const imageUrl = this.getAttribute('data-image-url');
-
-                        // 更新主图
-                        if (mainImage && imageUrl) {
-                          mainImage.src = imageUrl;
-                        }
-
-                        // 移除所有缩略图的active状态
-                        imgItems.forEach(function (img) {
-                          img.classList.remove('active');
+                          updateButtonState();
                         });
 
-                        // 给当前点击的缩略图添加active状态
-                        this.classList.add('active');
-                      });
-                    });
+                        quantityInput.addEventListener('keypress', function (e) {
+                          // 阻止输入非数字字符
+                          if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        });
 
-                    // 缩略图滑动功能
-                    const imgList = document.getElementById('img_list');
-                    const prevBtn = document.getElementById('prevBtn');
-                    const nextBtn = document.getElementById('nextBtn');
-                    const imgListWrapper = document.querySelector('.img_list_wrapper');
+                        quantityInput.addEventListener('paste', function (e) {
+                          e.preventDefault();
+                          const paste = (e.clipboardData || window.clipboardData).getData('text');
+                          const numbersOnly = paste.replace(/[^\d]/g, '');
+                          if (numbersOnly && parseInt(numbersOnly) > 0) {
+                            this.value = parseInt(numbersOnly).toString();
+                            updateTotalPrice();
+                            updateButtonState();
+                          }
+                        });
 
-                    let currentScroll = 0;
-                    const scrollStep = 97; // 每次滚动一个缩略图的宽度 (85px + 12px gap)
-
-                    // 检查是否需要显示滚动按钮
-                    function updateScrollButtons() {
-                      if (!imgList || !imgListWrapper) return;
-
-                      const maxScroll = imgList.scrollWidth - imgListWrapper.clientWidth;
-
-                      // 如果内容宽度小于等于容器宽度，隐藏所有按钮
-                      if (maxScroll <= 0) {
-                        prevBtn.style.display = 'none';
-                        nextBtn.style.display = 'none';
-                        return;
+                        // 页面加载时计算一次总价和更新按钮状态
+                        updateTotalPrice();
+                        updateButtonState();
                       }
 
-                      // 显示/隐藏左按钮
-                      if (currentScroll <= 0) {
-                        prevBtn.style.display = 'none';
-                      } else {
-                        prevBtn.style.display = 'flex';
+                      // 支付表单提交前确认
+                      const paymentForm = document.getElementById('form');
+                      if (paymentForm) {
+                        paymentForm.addEventListener('submit', function (e) {
+                          const quantity = parseInt(document.getElementById('quantity').value);
+                          const stock = <%= product != null ? product.getStock() : 0 %>;
+                          const totalPrice = document.getElementById('totalPrice').textContent;
+
+                          // 验证数量
+                          if (!quantity || quantity <= 0) {
+                            e.preventDefault();
+                            alert('请输入有效的购买数量');
+                            return false;
+                          }
+
+                          // 验证库存
+                          if (quantity > stock) {
+                            e.preventDefault();
+                            alert('购买数量超过库存！当前库存：' + stock);
+                            return false;
+                          }
+
+                          // 确认支付
+                          const confirmed = confirm(
+                            '确认支付 ¥' + totalPrice + ' 吗？\n\n' +
+                            '点击确定将跳转到支付宝支付页面'
+                          );
+
+                          if (!confirmed) {
+                            e.preventDefault();
+                            return false;
+                          }
+                        });
                       }
 
-                      // 显示/隐藏右按钮
-                      if (currentScroll >= maxScroll) {
-                        nextBtn.style.display = 'none';
-                      } else {
-                        nextBtn.style.display = 'flex';
-                      }
-                    }
+                      // 图片切换功能
+                      const mainImage = document.getElementById('mainImage');
+                      const imgItems = document.querySelectorAll('.img_item');
 
-                    // 向左滚动
-                    if (prevBtn) {
-                      prevBtn.addEventListener('click', function () {
-                        currentScroll = Math.max(0, currentScroll - scrollStep);
-                        imgList.style.transform = 'translateX(-' + currentScroll + 'px)';
-                        updateScrollButtons();
-                      });
-                    }
+                      // 为每个缩略图添加点击事件
+                      imgItems.forEach(function (item) {
+                        item.addEventListener('click', function () {
+                          // 获取点击的图片URL
+                          const imageUrl = this.getAttribute('data-image-url');
 
-                    // 向右滚动
-                    if (nextBtn) {
-                      nextBtn.addEventListener('click', function () {
-                        const maxScroll = imgList.scrollWidth - imgListWrapper.clientWidth;
-                        currentScroll = Math.min(maxScroll, currentScroll + scrollStep);
-                        imgList.style.transform = 'translateX(-' + currentScroll + 'px)';
-                        updateScrollButtons();
-                      });
-                    }
+                          // 更新主图
+                          if (mainImage && imageUrl) {
+                            mainImage.src = imageUrl;
+                          }
 
-                    // 初始化按钮状态
-                    updateScrollButtons();
-
-                    // 窗口大小改变时重新计算
-                    window.addEventListener('resize', function () {
-                      currentScroll = 0;
-                      imgList.style.transform = 'translateX(0)';
-                      updateScrollButtons();
-                    });
-
-                    // 评论展开/收起功能
-                    const reviewItems = document.querySelectorAll('.review_item');
-
-                    reviewItems.forEach(function (item) {
-                      const content = item.querySelector('.review_content');
-                      const expandBtn = item.querySelector('.review_expand_btn');
-
-                      if (content && expandBtn) {
-                        // 检查内容是否超过限制高度（60px约3行）
-                        if (content.scrollHeight > 60) {
-                          // 显示展开按钮
-                          expandBtn.style.display = 'inline-block';
-
-                          // 添加点击事件
-                          expandBtn.addEventListener('click', function () {
-                            if (content.classList.contains('collapsed')) {
-                              // 展开
-                              content.classList.remove('collapsed');
-                              expandBtn.textContent = '收起';
-                            } else {
-                              // 收起
-                              content.classList.add('collapsed');
-                              expandBtn.textContent = '展开';
-                            }
+                          // 移除所有缩略图的active状态
+                          imgItems.forEach(function (img) {
+                            img.classList.remove('active');
                           });
+
+                          // 给当前点击的缩略图添加active状态
+                          this.classList.add('active');
+                        });
+                      });
+
+                      // 缩略图滑动功能
+                      const imgList = document.getElementById('img_list');
+                      const prevBtn = document.getElementById('prevBtn');
+                      const nextBtn = document.getElementById('nextBtn');
+                      const imgListWrapper = document.querySelector('.img_list_wrapper');
+
+                      let currentScroll = 0;
+                      const scrollStep = 97; // 每次滚动一个缩略图的宽度 (85px + 12px gap)
+
+                      // 检查是否需要显示滚动按钮
+                      function updateScrollButtons() {
+                        if (!imgList || !imgListWrapper) return;
+
+                        const maxScroll = imgList.scrollWidth - imgListWrapper.clientWidth;
+
+                        // 如果内容宽度小于等于容器宽度，隐藏所有按钮
+                        if (maxScroll <= 0) {
+                          prevBtn.style.display = 'none';
+                          nextBtn.style.display = 'none';
+                          return;
+                        }
+
+                        // 显示/隐藏左按钮
+                        if (currentScroll <= 0) {
+                          prevBtn.style.display = 'none';
                         } else {
-                          // 内容不长，移除 collapsed 类，隐藏按钮
-                          content.classList.remove('collapsed');
-                          expandBtn.style.display = 'none';
+                          prevBtn.style.display = 'flex';
+                        }
+
+                        // 显示/隐藏右按钮
+                        if (currentScroll >= maxScroll) {
+                          nextBtn.style.display = 'none';
+                        } else {
+                          nextBtn.style.display = 'flex';
                         }
                       }
+
+                      // 向左滚动
+                      if (prevBtn) {
+                        prevBtn.addEventListener('click', function () {
+                          currentScroll = Math.max(0, currentScroll - scrollStep);
+                          imgList.style.transform = 'translateX(-' + currentScroll + 'px)';
+                          updateScrollButtons();
+                        });
+                      }
+
+                      // 向右滚动
+                      if (nextBtn) {
+                        nextBtn.addEventListener('click', function () {
+                          const maxScroll = imgList.scrollWidth - imgListWrapper.clientWidth;
+                          currentScroll = Math.min(maxScroll, currentScroll + scrollStep);
+                          imgList.style.transform = 'translateX(-' + currentScroll + 'px)';
+                          updateScrollButtons();
+                        });
+                      }
+
+                      // 初始化按钮状态
+                      updateScrollButtons();
+
+                      // 窗口大小改变时重新计算
+                      window.addEventListener('resize', function () {
+                        currentScroll = 0;
+                        imgList.style.transform = 'translateX(0)';
+                        updateScrollButtons();
+                      });
+
+                      // 评论展开/收起功能
+                      const reviewItems = document.querySelectorAll('.review_item');
+
+                      reviewItems.forEach(function (item) {
+                        const content = item.querySelector('.review_content');
+                        const expandBtn = item.querySelector('.review_expand_btn');
+
+                        if (content && expandBtn) {
+                          // 检查内容是否超过限制高度（60px约3行）
+                          if (content.scrollHeight > 60) {
+                            // 显示展开按钮
+                            expandBtn.style.display = 'inline-block';
+
+                            // 添加点击事件
+                            expandBtn.addEventListener('click', function () {
+                              if (content.classList.contains('collapsed')) {
+                                // 展开
+                                content.classList.remove('collapsed');
+                                expandBtn.textContent = '收起';
+                              } else {
+                                // 收起
+                                content.classList.add('collapsed');
+                                expandBtn.textContent = '展开';
+                              }
+                            });
+                          } else {
+                            // 内容不长，移除 collapsed 类，隐藏按钮
+                            content.classList.remove('collapsed');
+                            expandBtn.style.display = 'none';
+                          }
+                        }
+                      });
                     });
-                  });
-                </script>
+                  </script>
               </body>
 
               </html>
