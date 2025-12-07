@@ -377,7 +377,8 @@
 
                   .product_reviews {
                     width: 340px;
-                    min-height: 420px;
+                    height: 420px;
+                    max-height: 420px;
                     overflow-y: auto;
                     position: absolute;
                     right: 0;
@@ -386,6 +387,7 @@
                     border-radius: 10px;
                     padding: 20px;
                     border: 1px solid #e8e8e8;
+                    scroll-behavior: smooth;
                   }
 
                   .product_reviews::-webkit-scrollbar {
@@ -423,6 +425,36 @@
                     font-size: 13px;
                     line-height: 1.6;
                     color: #595959;
+                    position: relative;
+                  }
+
+                  .review_content.collapsed {
+                    max-height: 60px;
+                    overflow: hidden;
+                  }
+
+                  .review_content.collapsed::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 20px;
+                    background: linear-gradient(to bottom, transparent, #fafafa);
+                  }
+
+                  .review_expand_btn {
+                    font-size: 12px;
+                    color: #1890ff;
+                    cursor: pointer;
+                    margin-top: 5px;
+                    display: inline-block;
+                    user-select: none;
+                  }
+
+                  .review_expand_btn:hover {
+                    color: #40a9ff;
+                    text-decoration: underline;
                   }
 
                   .review_time {
@@ -538,9 +570,10 @@
                               ★
                               <% } %>
                           </div>
-                          <div class="review_content">
+                          <div class="review_content collapsed">
                             <%= review.getContent() %>
                           </div>
+                          <span class="review_expand_btn" style="display: none;">展开</span>
                           <% if (review.getCreate_time() !=null) { %>
                             <div class="review_time">
                               <%= review.getCreate_time() %>
@@ -735,6 +768,39 @@
                       currentScroll = 0;
                       imgList.style.transform = 'translateX(0)';
                       updateScrollButtons();
+                    });
+
+                    // 评论展开/收起功能
+                    const reviewItems = document.querySelectorAll('.review_item');
+
+                    reviewItems.forEach(function (item) {
+                      const content = item.querySelector('.review_content');
+                      const expandBtn = item.querySelector('.review_expand_btn');
+
+                      if (content && expandBtn) {
+                        // 检查内容是否超过限制高度（60px约3行）
+                        if (content.scrollHeight > 60) {
+                          // 显示展开按钮
+                          expandBtn.style.display = 'inline-block';
+
+                          // 添加点击事件
+                          expandBtn.addEventListener('click', function () {
+                            if (content.classList.contains('collapsed')) {
+                              // 展开
+                              content.classList.remove('collapsed');
+                              expandBtn.textContent = '收起';
+                            } else {
+                              // 收起
+                              content.classList.add('collapsed');
+                              expandBtn.textContent = '展开';
+                            }
+                          });
+                        } else {
+                          // 内容不长，移除 collapsed 类，隐藏按钮
+                          content.classList.remove('collapsed');
+                          expandBtn.style.display = 'none';
+                        }
+                      }
                     });
                   });
                 </script>
