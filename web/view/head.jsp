@@ -29,14 +29,9 @@
         }
 
         .navbar-logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: #fff;
-            text-decoration: none;
-            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            text-decoration: none;
             transition: transform 0.3s;
         }
 
@@ -44,9 +39,9 @@
             transform: scale(1.05);
         }
 
-        .navbar-logo::before {
-            content: '🛒';
-            font-size: 32px;
+        .navbar-logo-img {
+            height: 50px;
+            width: auto;
         }
 
         .navbar-menu {
@@ -114,17 +109,19 @@
         <div class="navbar-container">
             <!-- 左侧：Logo 和导航 -->
             <div class="navbar-left">
-                <a href="#" class="navbar-logo">淘多多</a>
+                <a href="${pageContext.request.contextPath}/index.jsp" class="navbar-logo">
+                    <img src="${pageContext.request.contextPath}/icon/logo-white.png" alt="淘多多" class="navbar-logo-img">
+                </a>
                 <div class="navbar-menu">
-                    <a href="#">首页</a>
+                    <a href="${pageContext.request.contextPath}/index.jsp">首页</a>
                     <a href="#">分类</a>
                 </div>
             </div>
 
             <!-- 右侧：未登录状态 -->
             <div class="navbar-right">
-                <a href="#" class="navbar-btn login">登录</a>
-                <a href="#" class="navbar-btn register">注册</a>
+                <a href="${pageContext.request.contextPath}/view/login.jsp" class="navbar-btn login">登录</a>
+                <a href="${pageContext.request.contextPath}/view/register.jsp" class="navbar-btn register">注册</a>
             </div>
         </div>
     </nav>
