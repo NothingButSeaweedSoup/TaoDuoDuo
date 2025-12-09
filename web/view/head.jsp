@@ -171,7 +171,7 @@
                         <div class="navbar-user">
                             <span class="navbar-user-name">欢迎，<%= username %></span>
                             <div class="navbar-user-menu">
-                                <a href="${pageContext.request.contextPath}/view/cart.jsp">购物车</a>
+                                <a href="${pageContext.request.contextPath}/CartServlet">购物车</a>
                                 <a href="#">订单</a>
                                 <a href="#">个人中心</a>
                             </div>

@@ -885,6 +885,59 @@
                           }
                         }
                       });
+
+                      // 检查URL参数显示购物车操作结果
+                      const urlParams = new URLSearchParams(window.location.search);
+                      if (urlParams.get('cartSuccess') === 'true') {
+                        alert('已成功加入购物车！');
+                        // 清除URL参数
+                        window.history.replaceState({}, document.title, window.location.pathname + '?id=' + urlParams.get('id'));
+                      } else if (urlParams.get('cartError') === 'true') {
+                        alert('加入购物车失败，请重试');
+                        window.history.replaceState({}, document.title, window.location.pathname + '?id=' + urlParams.get('id'));
+                      }
+
+                      // 加入购物车按钮
+                      const addCartBtn = document.getElementById('add_cart');
+                      if (addCartBtn) {
+                        addCartBtn.addEventListener('click', function () {
+                          const quantity = parseInt(document.getElementById('quantity').value);
+                          const productId = <%= product != null ? product.getProduct_id() : 0 %>;
+                          const stock = <%= product != null ? product.getStock() : 0 %>;
+
+                          // 验证数量
+                          if (!quantity || quantity <= 0) {
+                            alert('请输入有效的购买数量');
+                            return;
+                          }
+
+                          // 验证库存
+                          if (quantity > stock) {
+                            alert('购买数量超过库存！当前库存：' + stock);
+                            return;
+                          }
+
+                          // 创建表单并提交
+                          const form = document.createElement('form');
+                          form.method = 'POST';
+                          form.action = '<%= request.getContextPath() %>/AddToCartServlet';
+
+                          const productIdInput = document.createElement('input');
+                          productIdInput.type = 'hidden';
+                          productIdInput.name = 'productId';
+                          productIdInput.value = productId;
+                          form.appendChild(productIdInput);
+
+                          const quantityInput = document.createElement('input');
+                          quantityInput.type = 'hidden';
+                          quantityInput.name = 'quantity';
+                          quantityInput.value = quantity;
+                          form.appendChild(quantityInput);
+
+                          document.body.appendChild(form);
+                          form.submit();
+                        });
+                      }
                     });
                   </script>
               </body>
