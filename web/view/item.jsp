@@ -701,6 +701,21 @@
                           if (value === '' || value === '0') {
                             value = '';
                           }
+
+                          // 检查是否超过库存
+                          if (value !== '' && parseInt(value) > stock) {
+                            value = stock.toString();
+                            // 可选：显示提示
+                            if (this.value !== value) {
+                              // 只在第一次超过时提示
+                              const tempBorder = this.style.borderColor;
+                              this.style.borderColor = '#ff4d4f';
+                              setTimeout(() => {
+                                this.style.borderColor = tempBorder;
+                              }, 500);
+                            }
+                          }
+
                           this.value = value;
 
                           // 实时更新总价和按钮状态
