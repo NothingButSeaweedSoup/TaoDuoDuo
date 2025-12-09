@@ -14,23 +14,21 @@ public class UserService {
     }
 
     /**
-     * 用户登录验证
+     * 用户登录验证（支持用户ID/用户名/手机号/邮箱登录）
      * 
-     * @param username 用户名
+     * @param loginId  登录标识（手机号/邮箱）
      * @param password 明文密码
      * @return 登录成功返回用户对象，失败返回Optional.empty()
      */
-    public Optional<User> login(String username, String password) {
-        Optional<User> userOptional = userDao.getUserByUsername(username);
-
-        if (!userOptional.isPresent()) {
-            return Optional.empty();
+    public Optional<User> login(String loginId, String password) {
+        Optional<User> userOptional = userDao.getUserByPhone(loginId);
+        if (userOptional.isEmpty()) {
+            userOptional = userDao.getUserByEmail(loginId);
         }
 
-        User user = userOptional.get();
-
-        if (BCryptUtil.verify(password, user.getPassword())) {
-            return Optional.of(user);
+        // 只有当用户存在时才验证密码
+        if (userOptional.isPresent() && BCryptUtil.verify(password, userOptional.get().getPassword())) {
+            return userOptional;
         }
 
         return Optional.empty();

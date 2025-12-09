@@ -6,6 +6,10 @@
           Shop shop = (Shop) request.getAttribute("shop");
           List<Review> reviews = (List<Review>) request.getAttribute("reviews");
               String productName = product != null ? product.getProduct_name() : "商品详情";
+
+              // 检查用户是否登录
+              String username = (String) session.getAttribute("username");
+              boolean isLoggedIn = (username != null && !username.isEmpty());
               %>
               <!DOCTYPE html>
               <html lang="zh-CN">
@@ -729,8 +733,19 @@
 
                       // 支付表单提交前确认
                       const paymentForm = document.getElementById('form');
+                      const isLoggedIn = <%= isLoggedIn %>;
+
                       if (paymentForm) {
                         paymentForm.addEventListener('submit', function (e) {
+                          // 检查是否登录
+                          if (!isLoggedIn) {
+                            e.preventDefault();
+                            if (confirm('请先登录后再购买\n\n点击确定跳转到登录页面')) {
+                              window.location.href = '<%= request.getContextPath() %>/view/login.jsp';
+                            }
+                            return false;
+                          }
+
                           const quantity = parseInt(document.getElementById('quantity').value);
                           const stock = <%= product != null ? product.getStock() : 0 %>;
                           const totalPrice = document.getElementById('totalPrice').textContent;
@@ -901,6 +916,14 @@
                       const addCartBtn = document.getElementById('add_cart');
                       if (addCartBtn) {
                         addCartBtn.addEventListener('click', function () {
+                          // 检查是否登录
+                          if (!isLoggedIn) {
+                            if (confirm('请先登录后再加入购物车\n\n点击确定跳转到登录页面')) {
+                              window.location.href = '<%= request.getContextPath() %>/view/login.jsp';
+                            }
+                            return;
+                          }
+
                           const quantity = parseInt(document.getElementById('quantity').value);
                           const productId = <%= product != null ? product.getProduct_id() : 0 %>;
                           const stock = <%= product != null ? product.getStock() : 0 %>;

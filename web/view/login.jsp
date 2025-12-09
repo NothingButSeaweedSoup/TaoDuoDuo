@@ -125,27 +125,6 @@
 
 
 
-            /* 忘记密码 */
-            .form-options {
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                margin-bottom: 30px;
-                font-size: 14px;
-            }
-
-            .forgot-password {
-                color: #667eea;
-                text-decoration: none;
-                font-weight: 600;
-                transition: all 0.3s;
-            }
-
-            .forgot-password:hover {
-                color: #764ba2;
-                text-decoration: underline;
-            }
-
             /* 登录按钮 */
             .login-button {
                 width: 100%;
@@ -270,16 +249,17 @@
 
             <!-- 错误提示 -->
             <div class="error-message" id="errorMessage">
-                用户名或密码错误，请重试
+                账号或密码错误，请重试
             </div>
 
             <!-- 登录表单 -->
             <form class="login-form" id="loginForm" method="post"
                 action="${pageContext.request.contextPath}/LoginServlet">
-                <!-- 用户名 -->
+                <!-- 账号 -->
                 <div class="form-group">
-                    <label class="form-label" for="username">用户名</label>
-                    <input type="text" class="form-input" id="username" name="username" placeholder="请输入用户名" required>
+                    <label class="form-label" for="username">账号</label>
+                    <input type="text" class="form-input" id="username" name="username" placeholder="请输入手机号/邮箱"
+                        required>
                 </div>
 
                 <!-- 密码 -->
@@ -287,11 +267,6 @@
                     <label class="form-label" for="password">密码</label>
                     <input type="password" class="form-input" id="password" name="password" placeholder="请输入密码"
                         required>
-                </div>
-
-                <!-- 忘记密码 -->
-                <div class="form-options">
-                    <a href="#" class="forgot-password">忘记密码？</a>
                 </div>
 
                 <!-- 登录按钮 -->
@@ -313,12 +288,6 @@
                 if (!username || !password) {
                     e.preventDefault();
                     showError('请填写完整的登录信息');
-                    return false;
-                }
-
-                if (username.length < 3) {
-                    e.preventDefault();
-                    showError('用户名至少需要3个字符');
                     return false;
                 }
 
@@ -346,9 +315,13 @@
                 const error = urlParams.get('error');
 
                 if (error === 'invalid') {
-                    showError('用户名或密码错误');
+                    showError('账号或密码错误');
                 } else if (error === 'required') {
                     showError('请先登录');
+                } else if (error === 'empty') {
+                    showError('账号和密码不能为空');
+                } else if (success === 'true') {
+                    showSuccess('注册成功！请登录');
                 }
             });
 
