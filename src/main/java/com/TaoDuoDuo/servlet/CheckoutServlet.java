@@ -78,6 +78,7 @@ public class CheckoutServlet extends HttpServlet {
 
         session.setAttribute("checkoutItems", selectedItems);
         session.setAttribute("checkoutTotal", totalAmount);
+        session.setAttribute("selectedCartIds", selectedCartIds);
 
         // 生成订单号
         String outTradeNo = "ORDER_" + System.currentTimeMillis() + "_" + userId;

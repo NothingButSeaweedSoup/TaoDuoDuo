@@ -1,7 +1,9 @@
 package com.TaoDuoDuo.servlet;
 
 import com.TaoDuoDuo.dao.CartDao;
+import com.TaoDuoDuo.dao.ProductDao;
 import com.TaoDuoDuo.entity.Cart;
+import com.TaoDuoDuo.entity.Product;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,10 +17,12 @@ import java.util.Optional;
 @WebServlet(name = "UpdateCartServlet", value = "/UpdateCartServlet")
 public class UpdateCartServlet extends HttpServlet {
     private CartDao cartDao;
+    private ProductDao productDao;
 
     @Override
     public void init() throws ServletException {
         cartDao = new CartDao();
+        productDao = new ProductDao();
     }
 
     @Override
@@ -49,8 +53,21 @@ public class UpdateCartServlet extends HttpServlet {
                     Optional<Cart> cartOptional = cartDao.getCartById(cartId);
                     if (cartOptional.isPresent()) {
                         Cart cart = cartOptional.get();
-                        cart.setQuantity(quantity);
-                        success = cartDao.updateCart(cart);
+
+                        // 检查库存
+                        Optional<Product> productOptional = productDao.getProductById(cart.getProduct_id());
+                        if (productOptional.isPresent()) {
+                            Product product = productOptional.get();
+                            int stock = product.getStock();
+
+                            // 如果请求数量超过库存，自动调整为库存数量
+                            if (quantity > stock) {
+                                quantity = stock;
+                            }
+
+                            cart.setQuantity(quantity);
+                            success = cartDao.updateCart(cart);
+                        }
                     }
                 }
             } catch (NumberFormatException e) {
