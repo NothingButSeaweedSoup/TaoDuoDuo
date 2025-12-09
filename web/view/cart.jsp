@@ -104,6 +104,16 @@
                                 color: #ff6b6b;
                             }
 
+                            .cart-item-stock {
+                                font-size: 14px;
+                                color: #8c8c8c;
+                            }
+
+                            .cart-item-stock.low-stock {
+                                color: #ff4d4f;
+                                font-weight: 600;
+                            }
+
                             .cart-item-quantity {
                                 display: flex;
                                 align-items: center;
@@ -267,7 +277,8 @@
                                                         <input type="checkbox" class="cart-item-checkbox"
                                                             data-cart-id="<%= item.getCart().getCart_id() %>"
                                                             data-price="<%= item.getProduct().getPrice() %>"
-                                                            data-quantity="<%= item.getCart().getQuantity() %>">
+                                                            data-quantity="<%= item.getCart().getQuantity() %>"
+                                                            data-stock="<%= item.getProduct().getStock() %>">
 
                                                         <div class="cart-item-image">
                                                             <img src="<%= imgSrc %>"
@@ -281,17 +292,22 @@
                                                             <div class="cart-item-price">¥<%= String.format("%.2f",
                                                                     item.getProduct().getPrice()) %>
                                                             </div>
-                                                            <div class="cart-item-quantity">
-                                                                <span>数量：</span>
-                                                                <button class="quantity-btn"
-                                                                    onclick="updateQuantity(<%= item.getCart().getCart_id() %>, -1)">-</button>
-                                                                <input type="text" class="quantity-input"
-                                                                    id="quantity-<%= item.getCart().getCart_id() %>"
-                                                                    value="<%= item.getCart().getQuantity() %>"
-                                                                    readonly>
-                                                                <button class="quantity-btn"
-                                                                    onclick="updateQuantity(<%= item.getCart().getCart_id() %>, 1)">+</button>
-                                                            </div>
+                                                            <% String stockClass=item.getProduct().getStock() < 10
+                                                                ? "cart-item-stock low-stock" : "cart-item-stock" ; %>
+                                                                <div class="<%= stockClass %>">
+                                                                    库存：<%= item.getProduct().getStock() %>件
+                                                                </div>
+                                                                <div class="cart-item-quantity">
+                                                                    <span>数量：</span>
+                                                                    <button class="quantity-btn"
+                                                                        onclick="updateQuantity(<%= item.getCart().getCart_id() %>, -1, <%= item.getProduct().getStock() %>)">-</button>
+                                                                    <input type="text" class="quantity-input"
+                                                                        id="quantity-<%= item.getCart().getCart_id() %>"
+                                                                        value="<%= item.getCart().getQuantity() %>"
+                                                                        readonly>
+                                                                    <button class="quantity-btn"
+                                                                        onclick="updateQuantity(<%= item.getCart().getCart_id() %>, 1, <%= item.getProduct().getStock() %>)">+</button>
+                                                                </div>
                                                         </div>
 
                                                         <button class="cart-item-remove"
@@ -318,10 +334,18 @@
                             </div>
 
                             <script>
-                                function updateQuantity(cartId, change) {
+                                function updateQuantity(cartId, change, stock) {
                                     const input = document.getElementById('quantity-' + cartId);
                                     let quantity = parseInt(input.value) + change;
+
+                                    // 限制最小值为1
                                     if (quantity < 1) quantity = 1;
+
+                                    // 限制最大值为库存
+                                    if (quantity > stock) {
+                                        quantity = stock;
+                                        alert('已达到库存上限（' + stock + '件）');
+                                    }
 
                                     // 使用AJAX更新数量
                                     const xhr = new XMLHttpRequest();

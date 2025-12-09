@@ -199,6 +199,24 @@
                             class="btn btn-secondary">继续购物</a>
                     </div>
         </div>
+
+        <script>
+            // 支付成功后自动清理购物车中已购买的商品
+            window.addEventListener('DOMContentLoaded', function () {
+                fetch('<%= request.getContextPath() %>/ClearCartServlet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function (response) {
+                    return response.text();
+                }).then(function (data) {
+                    console.log('购物车清理结果:', data);
+                }).catch(function (error) {
+                    console.error('清理购物车失败:', error);
+                });
+            });
+        </script>
     </body>
 
     </html>

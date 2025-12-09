@@ -157,7 +157,7 @@
 
         <!-- 快捷操作卡片 -->
         <div class="action-cards">
-          <div class="action-card" onclick="location.href='${pageContext.request.contextPath}/view/cart.jsp'">
+          <div class="action-card" onclick="location.href='${pageContext.request.contextPath}/CartServlet'">
             <div class="action-card-icon">🛒</div>
             <div class="action-card-title">购物车</div>
             <div class="action-card-desc">查看购物车中的商品</div>
