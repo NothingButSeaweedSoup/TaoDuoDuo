@@ -32,17 +32,19 @@ public class ProductDetailServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         doPost(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             // 获取商品ID参数
             String productIdParam = request.getParameter("id");
             if (productIdParam == null || productIdParam.trim().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "缺少商品ID参数");
+                response.sendRedirect(request.getContextPath() + "/view/notFound.jsp");
                 return;
             }
 
@@ -51,7 +53,7 @@ public class ProductDetailServlet extends HttpServlet {
             // 获取商品详细信息
             Optional<Product> productOptional = productDetailService.getProductDetail(productId);
             if (!productOptional.isPresent()) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "商品不存在");
+                response.sendRedirect(request.getContextPath() + "/view/notFound.jsp");
                 return;
             }
             Product product = productOptional.get();
@@ -75,7 +77,7 @@ public class ProductDetailServlet extends HttpServlet {
             // 转发到商品详情页面
             request.getRequestDispatcher("/view/item.jsp").forward(request, response);
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "无效的商品ID格式");
+            response.sendRedirect(request.getContextPath() + "/view/notFound.jsp");
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "服务器内部错误");

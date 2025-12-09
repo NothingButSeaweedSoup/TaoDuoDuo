@@ -363,7 +363,8 @@
                 const phoneRegex = /^1[3-9]\d{9}$/;
                 if (!phoneRegex.test(phone)) {
                     e.preventDefault();
-                    showError('请输入有效的11位手机号');
+                    console.log('手机号验证失败:', phone, '长度:', phone.length);
+                    showError('请输入有效的11位手机号（格式：1开头的11位数字）');
                     return false;
                 }
 
@@ -407,6 +408,22 @@
                 successDiv.textContent = message;
                 successDiv.classList.add('show');
             }
+
+            // 手机号实时验证提示
+            document.getElementById('phone').addEventListener('input', function () {
+                const phone = this.value.trim();
+                const phoneRegex = /^1[3-9]\d{9}$/;
+
+                if (phone.length > 0 && phone.length === 11) {
+                    if (!phoneRegex.test(phone)) {
+                        this.style.borderColor = '#ff4d4f';
+                    } else {
+                        this.style.borderColor = '#52c41a';
+                    }
+                } else {
+                    this.style.borderColor = '#e8e8e8';
+                }
+            });
 
             // 密码强度检测
             document.getElementById('password').addEventListener('input', function () {
