@@ -10,6 +10,7 @@ public class Product {
     private int stock;
     private int category_id;
     private int shop_id;
+    private boolean product_listing;
     private LocalDateTime create_time;
     private LocalDateTime update_time;
 
@@ -20,20 +21,24 @@ public class Product {
         this.stock = stock;
         this.category_id = category_id;
         this.shop_id = shop_id;
+        this.product_listing = false; // 默认下架
     }
 
-    public Product(String product_name, String description, double price, int stock, int category_id, int shop_id, LocalDateTime create_time, LocalDateTime update_time) {
+    public Product(String product_name, String description, double price, int stock, int category_id, int shop_id,
+            LocalDateTime create_time, LocalDateTime update_time) {
         this.product_name = product_name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.category_id = category_id;
         this.shop_id = shop_id;
+        this.product_listing = false; // 默认下架
         this.create_time = create_time;
         this.update_time = update_time;
     }
 
-    public Product(int product_id, String product_name, String description, double price, int stock, int category_id, int shop_id, LocalDateTime create_time, LocalDateTime update_time) {
+    public Product(int product_id, String product_name, String description, double price, int stock, int category_id,
+            int shop_id, boolean product_listing, LocalDateTime create_time, LocalDateTime update_time) {
         this.product_id = product_id;
         this.product_name = product_name;
         this.description = description;
@@ -41,6 +46,7 @@ public class Product {
         this.stock = stock;
         this.category_id = category_id;
         this.shop_id = shop_id;
+        this.product_listing = product_listing;
         this.create_time = create_time;
         this.update_time = update_time;
     }
@@ -102,6 +108,14 @@ public class Product {
 
     public void setShop_id(int shop_id) {
         this.shop_id = shop_id;
+    }
+
+    public boolean isProduct_listing() {
+        return product_listing;
+    }
+
+    public void setProduct_listing(boolean product_listing) {
+        this.product_listing = product_listing;
     }
 
     public LocalDateTime getCreate_time() {

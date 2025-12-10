@@ -46,6 +46,7 @@ public class CheckoutServlet extends HttpServlet {
 
         List<CartItem> allCartItems = cartService.getUserCartItems(userId);
         List<CartItem> selectedItems = new ArrayList<>();
+        List<String> unavailableProducts = new ArrayList<>();
         double totalAmount = 0.0;
         StringBuilder productNames = new StringBuilder();
 
@@ -54,6 +55,18 @@ public class CheckoutServlet extends HttpServlet {
                 int cartId = Integer.parseInt(cartIdStr);
                 for (CartItem item : allCartItems) {
                     if (item.getCart().getCart_id() == cartId) {
+                        // 检查商品是否上架
+                        if (!item.getProduct().isProduct_listing()) {
+                            unavailableProducts.add(item.getProduct().getProduct_name() + "（已下架）");
+                            continue;
+                        }
+
+                        // 检查库存
+                        if (item.getProduct().getStock() < item.getCart().getQuantity()) {
+                            unavailableProducts.add(item.getProduct().getProduct_name() + "（库存不足）");
+                            continue;
+                        }
+
                         selectedItems.add(item);
                         totalAmount += item.getSubtotal();
                         if (productNames.length() > 0) {
@@ -66,6 +79,14 @@ public class CheckoutServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
+        }
+
+        // 如果有不可购买的商品，返回错误信息
+        if (!unavailableProducts.isEmpty()) {
+            String errorMsg = "以下商品无法购买：" + String.join("、", unavailableProducts);
+            response.sendRedirect(request.getContextPath() + "/CartServlet?error=" +
+                    java.net.URLEncoder.encode(errorMsg, "UTF-8"));
+            return;
         }
 
         if (selectedItems.isEmpty()) {

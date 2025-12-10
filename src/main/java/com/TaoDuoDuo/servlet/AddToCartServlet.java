@@ -1,6 +1,7 @@
 package com.TaoDuoDuo.servlet;
 
 import com.TaoDuoDuo.service.CartService;
+import com.TaoDuoDuo.service.ProductService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,10 +14,12 @@ import java.io.IOException;
 @WebServlet(name = "AddToCartServlet", value = "/AddToCartServlet")
 public class AddToCartServlet extends HttpServlet {
     private CartService cartService;
+    private ProductService productService;
 
     @Override
     public void init() throws ServletException {
         cartService = new CartService();
+        productService = new ProductService();
     }
 
     @Override
@@ -46,6 +49,14 @@ public class AddToCartServlet extends HttpServlet {
 
             if (quantity <= 0) {
                 quantity = 1;
+            }
+
+            // 检查商品是否可以购买（上架且有库存）
+            if (!productService.canPurchase(productId, quantity)) {
+                response.sendRedirect(
+                        request.getContextPath() + "/view/error.jsp?error=" +
+                                java.net.URLEncoder.encode("商品已下架或库存不足，无法加入购物车", "UTF-8"));
+                return;
             }
 
             boolean success = cartService.addToCart(userId, productId, quantity);

@@ -38,10 +38,22 @@ public class ProductDetailService {
         if (productOpt.isEmpty()) {
             return false;
         }
-        return productOpt.get().getStock() >= quantity;
+        Product product = productOpt.get();
+
+        // 检查商品是否上架
+        if (!product.isProduct_listing()) {
+            return false; // 商品已下架，不能购买
+        }
+
+        return product.getStock() >= quantity;
     }
 
     public boolean addToCart(int user_id, int product_id, int quantity) {
+        // 先检查商品是否可以购买（上架且有库存）
+        if (!checkStock(product_id, quantity)) {
+            return false; // 商品下架或库存不足
+        }
+
         CartDao cartDao = new CartDao();
         return cartDao.addCart(new Cart(user_id, product_id, quantity));
     }

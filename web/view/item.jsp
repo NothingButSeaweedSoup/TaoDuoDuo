@@ -569,6 +569,10 @@
                       <% if (product !=null) { %>
                         <div id="product_name" class="product_name">
                           <%= product.getProduct_name() %>
+                            <% if (!product.isProduct_listing()) { %>
+                              <span
+                                style="color: #ff4d4f; font-size: 14px; margin-left: 10px; padding: 4px 8px; background: #fff2f0; border-radius: 4px; border: 1px solid #ffccc7;">已下架</span>
+                              <% } %>
                         </div>
                         <div id="product_description" class="product_description">
                           <%= product.getDescription() !=null ? product.getDescription() : "" %>
@@ -597,8 +601,15 @@
                             <%= product !=null ? String.format("%.2f", product.getPrice()) : "0.00" %>
                           </span></span>
                       </div>
-                      <button type="button" id="add_cart" class="add_cart">加入购物车</button>
-                      <button type="submit" id="submit" class="submit">立即购买</button>
+                      <% if (product !=null && product.isProduct_listing()) { %>
+                        <button type="button" id="add_cart" class="add_cart">加入购物车</button>
+                        <button type="submit" id="submit" class="submit">立即购买</button>
+                        <% } else { %>
+                          <button type="button" class="add_cart" disabled
+                            style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
+                          <button type="button" class="submit" disabled
+                            style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
+                          <% } %>
                     </form>
 
                     <!-- 店铺名称 -->
@@ -645,6 +656,7 @@
                       const decreaseBtn = document.getElementById('decreaseBtn');
                       const increaseBtn = document.getElementById('increaseBtn');
                       const stock = <%= product != null ? product.getStock() : 999 %>;
+                      const isListed = <%= product != null ? product.isProduct_listing() : false %>;
 
                       // 计算总价的函数
                       function updateTotalPrice() {
@@ -659,8 +671,8 @@
                       // 更新按钮状态
                       function updateButtonState() {
                         const quantity = parseInt(quantityInput.value) || 1;
-                        decreaseBtn.disabled = quantity <= 1;
-                        increaseBtn.disabled = quantity >= stock;
+                        decreaseBtn.disabled = quantity <= 1 || !isListed;
+                        increaseBtn.disabled = quantity >= stock || !isListed;
                       }
 
                       // 减少数量
@@ -752,6 +764,13 @@
 
                       if (paymentForm) {
                         paymentForm.addEventListener('submit', function (e) {
+                          // 检查商品是否上架
+                          if (!isListed) {
+                            e.preventDefault();
+                            alert('商品已下架，无法购买');
+                            return false;
+                          }
+
                           // 检查是否登录
                           if (!isLoggedIn) {
                             e.preventDefault();
@@ -931,6 +950,12 @@
                       const addCartBtn = document.getElementById('add_cart');
                       if (addCartBtn) {
                         addCartBtn.addEventListener('click', function () {
+                          // 检查商品是否上架
+                          if (!isListed) {
+                            alert('商品已下架，无法加入购物车');
+                            return;
+                          }
+
                           // 检查是否登录
                           if (!isLoggedIn) {
                             if (confirm('请先登录后再加入购物车\n\n点击确定跳转到登录页面')) {

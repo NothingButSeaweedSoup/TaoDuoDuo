@@ -2,6 +2,7 @@ package com.TaoDuoDuo.servlet;
 
 import com.TaoDuoDuo.entity.Product;
 import com.TaoDuoDuo.service.ProductService;
+import com.TaoDuoDuo.service.OrderService;
 import com.TaoDuoDuo.util.PayUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,10 +20,12 @@ import java.util.Date;
 @WebServlet(name = "PaymentServlet", value = "/PaymentServlet")
 public class PaymentServlet extends HttpServlet {
     private ProductService productService;
+    private OrderService orderService;
 
     @Override
     public void init() throws ServletException {
         productService = new ProductService();
+        orderService = new OrderService();
     }
 
     @Override
@@ -43,8 +46,12 @@ public class PaymentServlet extends HttpServlet {
             int productId = Integer.parseInt(productIdStr);
             int quantity = Integer.parseInt(quantityStr);
 
-            if (quantity <= 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "购买数量必须大于0");
+            // 使用OrderService进行订单验证
+            OrderService.OrderValidationResult validation = orderService.validateSingleProductOrder(1, productId,
+                    quantity); // 这里暂时用1作为用户ID，实际应该从session获取
+
+            if (!validation.isValid()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, validation.getErrorMessage());
                 return;
             }
 
@@ -52,12 +59,6 @@ public class PaymentServlet extends HttpServlet {
             Product product = productService.getProductById(productId);
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "商品不存在");
-                return;
-            }
-
-            // 检查库存
-            if (product.getStock() < quantity) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "库存不足");
                 return;
             }
 

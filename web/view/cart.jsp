@@ -250,6 +250,22 @@
                                 transform: translateY(-2px);
                                 box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
                             }
+
+                            .unlisted-item {
+                                opacity: 0.6;
+                                background-color: #f5f5f5 !important;
+                            }
+
+                            .unlisted-item .cart-item-checkbox:disabled {
+                                cursor: not-allowed;
+                            }
+
+                            .unlisted-item .quantity-btn:disabled {
+                                background-color: #f5f5f5;
+                                color: #bfbfbf;
+                                cursor: not-allowed;
+                                border-color: #d9d9d9;
+                            }
                         </style>
                     </head>
 
@@ -273,45 +289,67 @@
                                                     imgSrc=request.getContextPath(); if (item.getProductImage() !=null)
                                                     { imgSrc +=item.getProductImage(); } else { imgSrc
                                                     +="/images/default.png" ; } %>
-                                                    <div class="cart-item">
+                                                    <div
+                                                        class="cart-item <% if (!item.getProduct().isProduct_listing()) { %>unlisted-item<% } %>">
                                                         <input type="checkbox" class="cart-item-checkbox"
                                                             data-cart-id="<%= item.getCart().getCart_id() %>"
                                                             data-price="<%= item.getProduct().getPrice() %>"
                                                             data-quantity="<%= item.getCart().getQuantity() %>"
-                                                            data-stock="<%= item.getProduct().getStock() %>">
+                                                            data-stock="<%= item.getProduct().getStock() %>"
+                                                            data-listed="<%= item.getProduct().isProduct_listing() %>"
+                                                            <% if (!item.getProduct().isProduct_listing()) { %>disabled
+                                                        <% } %>>
 
-                                                        <div class="cart-item-image">
-                                                            <img src="<%= imgSrc %>"
-                                                                alt="<%= item.getProduct().getProduct_name() %>">
-                                                        </div>
-
-                                                        <div class="cart-item-info">
-                                                            <div class="cart-item-name">
-                                                                <%= item.getProduct().getProduct_name() %>
+                                                            <div class="cart-item-image">
+                                                                <img src="<%= imgSrc %>"
+                                                                    alt="<%= item.getProduct().getProduct_name() %>">
                                                             </div>
-                                                            <div class="cart-item-price">¥<%= String.format("%.2f",
-                                                                    item.getProduct().getPrice()) %>
-                                                            </div>
-                                                            <% String stockClass=item.getProduct().getStock() < 10
-                                                                ? "cart-item-stock low-stock" : "cart-item-stock" ; %>
-                                                                <div class="<%= stockClass %>">
-                                                                    库存：<%= item.getProduct().getStock() %>件
-                                                                </div>
-                                                                <div class="cart-item-quantity">
-                                                                    <span>数量：</span>
-                                                                    <button class="quantity-btn"
-                                                                        onclick="updateQuantity(<%= item.getCart().getCart_id() %>, -1, <%= item.getProduct().getStock() %>)">-</button>
-                                                                    <input type="text" class="quantity-input"
-                                                                        id="quantity-<%= item.getCart().getCart_id() %>"
-                                                                        value="<%= item.getCart().getQuantity() %>"
-                                                                        readonly>
-                                                                    <button class="quantity-btn"
-                                                                        onclick="updateQuantity(<%= item.getCart().getCart_id() %>, 1, <%= item.getProduct().getStock() %>)">+</button>
-                                                                </div>
-                                                        </div>
 
-                                                        <button class="cart-item-remove"
-                                                            onclick="removeItem(<%= item.getCart().getCart_id() %>)">删除</button>
+                                                            <div class="cart-item-info">
+                                                                <div class="cart-item-name">
+                                                                    <%= item.getProduct().getProduct_name() %>
+                                                                        <% if (!item.getProduct().isProduct_listing()) {
+                                                                            %>
+                                                                            <span
+                                                                                style="color: #ff4d4f; font-size: 12px; margin-left: 8px; padding: 2px 6px; background: #fff2f0; border-radius: 3px; border: 1px solid #ffccc7;">已下架</span>
+                                                                            <% } %>
+                                                                </div>
+                                                                <div class="cart-item-price">¥<%= String.format("%.2f",
+                                                                        item.getProduct().getPrice()) %>
+                                                                </div>
+                                                                <% String stockClass=item.getProduct().getStock() < 10
+                                                                    ? "cart-item-stock low-stock" : "cart-item-stock" ;
+                                                                    %>
+                                                                    <div class="<%= stockClass %>">
+                                                                        库存：<%= item.getProduct().getStock() %>件
+                                                                            <% if
+                                                                                (!item.getProduct().isProduct_listing())
+                                                                                { %>
+                                                                                <span
+                                                                                    style="color: #ff4d4f; margin-left: 10px;">（商品已下架，无法结算）</span>
+                                                                                <% } %>
+                                                                    </div>
+                                                                    <div class="cart-item-quantity">
+                                                                        <span>数量：</span>
+                                                                        <button class="quantity-btn"
+                                                                            onclick="updateQuantity(<%= item.getCart().getCart_id() %>, -1, <%= item.getProduct().getStock() %>)"
+                                                                            <% if
+                                                                            (!item.getProduct().isProduct_listing()) {
+                                                                            %>disabled<% } %>>-</button>
+                                                                        <input type="text" class="quantity-input"
+                                                                            id="quantity-<%= item.getCart().getCart_id() %>"
+                                                                            value="<%= item.getCart().getQuantity() %>"
+                                                                            readonly>
+                                                                        <button class="quantity-btn"
+                                                                            onclick="updateQuantity(<%= item.getCart().getCart_id() %>, 1, <%= item.getProduct().getStock() %>)"
+                                                                            <% if
+                                                                            (!item.getProduct().isProduct_listing()) {
+                                                                            %>disabled<% } %>>+</button>
+                                                                    </div>
+                                                            </div>
+
+                                                            <button class="cart-item-remove"
+                                                                onclick="removeItem(<%= item.getCart().getCart_id() %>)">删除</button>
                                                     </div>
                                                     <% } %>
                                             </div>
@@ -336,6 +374,15 @@
                             <script>
                                 function updateQuantity(cartId, change, stock) {
                                     const input = document.getElementById('quantity-' + cartId);
+                                    const cartItem = input.closest('.cart-item');
+                                    const checkbox = cartItem.querySelector('.cart-item-checkbox');
+
+                                    // 检查商品是否上架
+                                    if (checkbox.dataset.listed === 'false') {
+                                        alert('商品已下架，无法修改数量');
+                                        return;
+                                    }
+
                                     let quantity = parseInt(input.value) + change;
 
                                     // 限制最小值为1
@@ -399,16 +446,21 @@
                                 function updateSummary() {
                                     const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
                                     let total = 0;
+                                    let validCount = 0;
 
                                     checkboxes.forEach(checkbox => {
-                                        const price = parseFloat(checkbox.dataset.price);
-                                        const quantity = parseInt(checkbox.dataset.quantity);
-                                        total += price * quantity;
+                                        // 只计算上架商品
+                                        if (checkbox.dataset.listed === 'true') {
+                                            const price = parseFloat(checkbox.dataset.price);
+                                            const quantity = parseInt(checkbox.dataset.quantity);
+                                            total += price * quantity;
+                                            validCount++;
+                                        }
                                     });
 
-                                    document.getElementById('selectedCount').textContent = checkboxes.length;
+                                    document.getElementById('selectedCount').textContent = validCount;
                                     document.getElementById('totalAmount').textContent = '¥' + total.toFixed(2);
-                                    document.getElementById('checkoutBtn').disabled = checkboxes.length === 0;
+                                    document.getElementById('checkoutBtn').disabled = validCount === 0;
                                 }
 
                                 function checkout() {
@@ -418,11 +470,29 @@
                                         return;
                                     }
 
+                                    // 过滤出上架的商品
+                                    const validCheckboxes = Array.from(checkboxes).filter(checkbox =>
+                                        checkbox.dataset.listed === 'true'
+                                    );
+
+                                    if (validCheckboxes.length === 0) {
+                                        alert('选中的商品都已下架，无法结算');
+                                        return;
+                                    }
+
+                                    // 检查是否有下架商品被选中
+                                    const unlistedCount = checkboxes.length - validCheckboxes.length;
+                                    if (unlistedCount > 0) {
+                                        if (!confirm(`有 ${unlistedCount} 个商品已下架将被跳过，是否继续结算其余商品？`)) {
+                                            return;
+                                        }
+                                    }
+
                                     const form = document.createElement('form');
                                     form.method = 'POST';
                                     form.action = '<%= request.getContextPath() %>/CheckoutServlet';
 
-                                    checkboxes.forEach(checkbox => {
+                                    validCheckboxes.forEach(checkbox => {
                                         const input = document.createElement('input');
                                         input.type = 'hidden';
                                         input.name = 'selectedCartIds';
@@ -437,7 +507,15 @@
                                 document.addEventListener('DOMContentLoaded', function () {
                                     const checkboxes = document.querySelectorAll('.cart-item-checkbox');
                                     checkboxes.forEach(checkbox => {
-                                        checkbox.addEventListener('change', updateSummary);
+                                        checkbox.addEventListener('change', function () {
+                                            // 如果是下架商品，阻止选中
+                                            if (this.dataset.listed === 'false' && this.checked) {
+                                                this.checked = false;
+                                                alert('商品已下架，无法选择结算');
+                                                return;
+                                            }
+                                            updateSummary();
+                                        });
                                     });
                                 });
                             </script>
