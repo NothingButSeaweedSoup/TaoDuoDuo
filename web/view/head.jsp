@@ -163,14 +163,22 @@
 
             <!-- 右侧：根据登录状态显示 -->
             <div class="navbar-right">
-                <% String navUsername=(String) session.getAttribute("username"); if (navUsername !=null &&
-                    !navUsername.isEmpty()) { %>
+                <% String navUsername=(String) session.getAttribute("username"); Integer userRole=(Integer)
+                    session.getAttribute("role"); if (navUsername !=null && !navUsername.isEmpty()) { %>
                     <div class="navbar-user">
-                        <span class="navbar-user-name">欢迎，<%= navUsername %></span>
+                        <span class="navbar-user-name">欢迎，<%= navUsername %>
+                                <% if (userRole !=null) { %>
+                                    <span style="font-size: 12px; opacity: 0.8;">
+                                        (<%= userRole==1 ? "用户" : userRole==2 ? "商家" : userRole==3 ? "管理员" : "未知" %>)
+                                    </span>
+                                    <% } %>
+                        </span>
                         <div class="navbar-user-menu">
-                            <a href="${pageContext.request.contextPath}/CartServlet">购物车</a>
-                            <a href="#">订单</a>
-                            <a href="#">个人中心</a>
+                            <% if (userRole !=null && userRole==1) { %>
+                                <a href="${pageContext.request.contextPath}/CartServlet">购物车</a>
+                                <% } %>
+                                    <a href="#">订单</a>
+                                    <a href="#">个人中心</a>
                         </div>
                         <a href="${pageContext.request.contextPath}/LogoutServlet" class="navbar-btn logout">退出</a>
                     </div>

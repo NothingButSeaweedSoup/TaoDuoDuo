@@ -157,23 +157,38 @@
 
         <!-- 快捷操作卡片 -->
         <div class="action-cards">
-          <div class="action-card" onclick="location.href='${pageContext.request.contextPath}/CartServlet'">
-            <div class="action-card-icon">🛒</div>
-            <div class="action-card-title">购物车</div>
-            <div class="action-card-desc">查看购物车中的商品</div>
-          </div>
+          <% Integer indexUserRole=(Integer) session.getAttribute("role"); if (indexUserRole !=null && indexUserRole==1)
+            { %>
+            <div class="action-card" onclick="location.href='${pageContext.request.contextPath}/CartServlet'">
+              <div class="action-card-icon">🛒</div>
+              <div class="action-card-title">购物车</div>
+              <div class="action-card-desc">查看购物车中的商品</div>
+            </div>
+            <% } else { %>
+              <div class="action-card" onclick="alert('只有用户身份才能使用购物车功能')">
+                <div class="action-card-icon">🛒</div>
+                <div class="action-card-title">购物车</div>
+                <div class="action-card-desc">
+                  <% if (indexUserRole==null) { %>
+                    请先登录
+                    <% } else { %>
+                      仅用户身份可用
+                      <% } %>
+                </div>
+              </div>
+              <% } %>
 
-          <div class="action-card" onclick="alert('订单功能开发中...')">
-            <div class="action-card-icon">📋</div>
-            <div class="action-card-title">我的订单</div>
-            <div class="action-card-desc">查看订单状态</div>
-          </div>
+                <div class="action-card" onclick="alert('订单功能开发中...')">
+                  <div class="action-card-icon">📋</div>
+                  <div class="action-card-title">我的订单</div>
+                  <div class="action-card-desc">查看订单状态</div>
+                </div>
 
-          <div class="action-card" onclick="alert('分类功能开发中...')">
-            <div class="action-card-icon">📦</div>
-            <div class="action-card-title">商品分类</div>
-            <div class="action-card-desc">浏览商品分类</div>
-          </div>
+                <div class="action-card" onclick="alert('分类功能开发中...')">
+                  <div class="action-card-icon">📦</div>
+                  <div class="action-card-title">商品分类</div>
+                  <div class="action-card-desc">浏览商品分类</div>
+                </div>
         </div>
 
         <!-- 测试功能区 -->

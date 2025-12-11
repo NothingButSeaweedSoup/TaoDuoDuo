@@ -33,10 +33,18 @@ public class UpdateCartServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
+        Integer userRole = (Integer) session.getAttribute("role");
 
         if (userId == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"success\":false,\"message\":\"未登录\"}");
+            return;
+        }
+
+        // 检查用户角色，只有用户身份才能使用购物车
+        if (userRole == null || userRole != 1) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"success\":false,\"message\":\"只有用户身份才能使用购物车功能\"}");
             return;
         }
 

@@ -7,9 +7,11 @@
           List<Review> reviews = (List<Review>) request.getAttribute("reviews");
               String productName = product != null ? product.getProduct_name() : "商品详情";
 
-              // 检查用户是否登录
+              // 检查用户是否登录和角色
               String username = (String) session.getAttribute("username");
+              Integer userRole = (Integer) session.getAttribute("role");
               boolean isLoggedIn = (username != null && !username.isEmpty());
+              boolean canUseCart = (userRole != null && userRole == 1);
               %>
               <!DOCTYPE html>
               <html lang="zh-CN">
@@ -602,14 +604,21 @@
                           </span></span>
                       </div>
                       <% if (product !=null && product.isProduct_listing()) { %>
-                        <button type="button" id="add_cart" class="add_cart">加入购物车</button>
-                        <button type="submit" id="submit" class="submit">立即购买</button>
-                        <% } else { %>
-                          <button type="button" class="add_cart" disabled
-                            style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
-                          <button type="button" class="submit" disabled
-                            style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
-                          <% } %>
+                        <% if (canUseCart) { %>
+                          <button type="button" id="add_cart" class="add_cart">加入购物车</button>
+                          <% } else { %>
+                            <button type="button" class="add_cart" disabled
+                              style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">
+                              <% if (!isLoggedIn) { %>请先登录<% } else { %>仅用户可用<% } %>
+                            </button>
+                            <% } %>
+                              <button type="submit" id="submit" class="submit">立即购买</button>
+                              <% } else { %>
+                                <button type="button" class="add_cart" disabled
+                                  style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
+                                <button type="button" class="submit" disabled
+                                  style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
+                                <% } %>
                     </form>
 
                     <!-- 店铺名称 -->
@@ -761,6 +770,7 @@
                       // 支付表单提交前确认
                       const paymentForm = document.getElementById('form');
                       const isLoggedIn = <%= isLoggedIn %>;
+                      const canUseCart = <%= canUseCart %>;
 
                       if (paymentForm) {
                         paymentForm.addEventListener('submit', function (e) {
@@ -956,10 +966,14 @@
                             return;
                           }
 
-                          // 检查是否登录
-                          if (!isLoggedIn) {
-                            if (confirm('请先登录后再加入购物车\n\n点击确定跳转到登录页面')) {
-                              window.location.href = '<%= request.getContextPath() %>/view/login.jsp';
+                          // 检查是否有购物车权限
+                          if (!canUseCart) {
+                            if (!isLoggedIn) {
+                              if (confirm('请先登录后再加入购物车\n\n点击确定跳转到登录页面')) {
+                                window.location.href = '<%= request.getContextPath() %>/view/login.jsp';
+                              }
+                            } else {
+                              alert('只有用户身份才能使用购物车功能');
                             }
                             return;
                           }

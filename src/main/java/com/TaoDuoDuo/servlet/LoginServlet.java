@@ -50,6 +50,8 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", user);
             session.setAttribute("userId", user.getUser_id());
             session.setAttribute("username", user.getUsername());
+            // 默认以用户身份登录 (1-用户，2-商家，3-管理员)
+            session.setAttribute("role", 1);
 
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {

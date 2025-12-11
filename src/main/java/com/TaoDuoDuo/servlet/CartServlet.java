@@ -26,9 +26,17 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
+        Integer userRole = (Integer) session.getAttribute("role");
 
         if (userId == null) {
             response.sendRedirect(request.getContextPath() + "/view/login.jsp?error=required");
+            return;
+        }
+
+        // 检查用户角色，只有用户身份才能访问购物车
+        if (userRole == null || userRole != 1) {
+            response.sendRedirect(request.getContextPath() + "/view/error.jsp?error=" +
+                    java.net.URLEncoder.encode("只有用户身份才能使用购物车功能", "UTF-8"));
             return;
         }
 
