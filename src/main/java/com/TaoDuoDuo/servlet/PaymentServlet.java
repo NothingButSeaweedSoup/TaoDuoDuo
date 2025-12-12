@@ -33,6 +33,22 @@ public class PaymentServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
+        // 检查用户登录状态和角色权限
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userRole = (Integer) request.getSession().getAttribute("role");
+
+        if (userId == null) {
+            response.sendRedirect(request.getContextPath() + "/view/login.jsp?error=required");
+            return;
+        }
+
+        // 检查用户角色，只有用户身份才能购买商品
+        if (userRole == null || userRole != 1) {
+            response.sendRedirect(request.getContextPath() + "/view/error.jsp?error=" +
+                    java.net.URLEncoder.encode("只有用户身份才能购买商品", "UTF-8"));
+            return;
+        }
+
         try {
             // 获取参数
             String productIdStr = request.getParameter("productId");
@@ -47,8 +63,8 @@ public class PaymentServlet extends HttpServlet {
             int quantity = Integer.parseInt(quantityStr);
 
             // 使用OrderService进行订单验证
-            OrderService.OrderValidationResult validation = orderService.validateSingleProductOrder(1, productId,
-                    quantity); // 这里暂时用1作为用户ID，实际应该从session获取
+            OrderService.OrderValidationResult validation = orderService.validateSingleProductOrder(userId, productId,
+                    quantity);
 
             if (!validation.isValid()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, validation.getErrorMessage());

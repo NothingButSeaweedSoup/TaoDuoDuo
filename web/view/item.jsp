@@ -612,13 +612,20 @@
                               <% if (!isLoggedIn) { %>请先登录<% } else { %>仅用户可用<% } %>
                             </button>
                             <% } %>
-                              <button type="submit" id="submit" class="submit">立即购买</button>
-                              <% } else { %>
-                                <button type="button" class="add_cart" disabled
-                                  style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
-                                <button type="button" class="submit" disabled
-                                  style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
-                                <% } %>
+                              <% if (canUseCart) { %>
+                                <button type="submit" id="submit" class="submit">立即购买</button>
+                                <% } else { %>
+                                  <button type="button" class="submit" disabled
+                                    style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">
+                                    <% if (!isLoggedIn) { %>请先登录<% } else { %>仅用户可用<% } %>
+                                  </button>
+                                  <% } %>
+                                    <% } else { %>
+                                      <button type="button" class="add_cart" disabled
+                                        style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
+                                      <button type="button" class="submit" disabled
+                                        style="background-color: #f5f5f5; color: #bfbfbf; cursor: not-allowed; border-color: #d9d9d9;">商品已下架</button>
+                                      <% } %>
                     </form>
 
                     <!-- 店铺名称 -->
@@ -787,6 +794,13 @@
                             if (confirm('请先登录后再购买\n\n点击确定跳转到登录页面')) {
                               window.location.href = '<%= request.getContextPath() %>/view/login.jsp';
                             }
+                            return false;
+                          }
+
+                          // 检查用户角色
+                          if (!canUseCart) {
+                            e.preventDefault();
+                            alert('只有用户身份才能购买商品');
                             return false;
                           }
 
