@@ -190,6 +190,35 @@
                 animation: shake 0.5s;
             }
 
+            /* 成功提示 */
+            .success-message {
+                background-color: #f6ffed;
+                border: 1px solid #b7eb8f;
+                border-radius: 10px;
+                padding: 12px 15px;
+                margin-bottom: 20px;
+                color: #52c41a;
+                font-size: 14px;
+                display: none;
+            }
+
+            .success-message.show {
+                display: block;
+                animation: fadeIn 0.5s;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
             @keyframes shake {
 
                 0%,
@@ -252,6 +281,11 @@
                 账号或密码错误，请重试
             </div>
 
+            <!-- 成功提示 -->
+            <div class="success-message" id="successMessage">
+                操作成功
+            </div>
+
             <!-- 登录表单 -->
             <form class="login-form" id="loginForm" method="post"
                 action="${pageContext.request.contextPath}/LoginServlet">
@@ -309,10 +343,22 @@
                 }, 3000);
             }
 
-            // 检查URL参数中的错误信息
+            // 显示成功信息
+            function showSuccess(message) {
+                const successDiv = document.getElementById('successMessage');
+                successDiv.textContent = message;
+                successDiv.classList.add('show');
+
+                setTimeout(function () {
+                    successDiv.classList.remove('show');
+                }, 5000);
+            }
+
+            // 检查URL参数中的错误和成功信息
             window.addEventListener('DOMContentLoaded', function () {
                 const urlParams = new URLSearchParams(window.location.search);
                 const error = urlParams.get('error');
+                const success = urlParams.get('success');
 
                 if (error === 'invalid') {
                     showError('账号或密码错误');
@@ -320,8 +366,8 @@
                     showError('请先登录');
                 } else if (error === 'empty') {
                     showError('账号和密码不能为空');
-                } else if (success === 'true') {
-                    showSuccess('注册成功！请登录');
+                } else if (success) {
+                    showSuccess(decodeURIComponent(success));
                 }
             });
 

@@ -365,66 +365,102 @@
                                 <div id="personal-info" class="content-section">
                                     <h2 class="content-title">个人信息修改</h2>
 
-                                    <form id="profileForm" method="post"
-                                        action="${pageContext.request.contextPath}/UpdateProfileServlet">
-                                        <div class="form-group clearfix">
-                                            <label class="form-label">用户ID:</label>
-                                            <div class="form-input-wrapper">
-                                                <input type="text" class="form-input" value="<%= request.getAttribute("profileUserId") !=null ? request.getAttribute("profileUserId") :
-                                                    session.getAttribute("userId") %>"
-                                                disabled placeholder="用户ID，不可修改">
+                                    <!-- 消息显示 -->
+                                    <% String profileSuccess=(String) request.getAttribute("success"); String
+                                        profileError=(String) request.getAttribute("error"); %>
+                                        <% if (profileSuccess !=null) { %>
+                                            <div
+                                                style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
+                                                ✓ <%= profileSuccess %>
                                             </div>
-                                        </div>
+                                            <% } %>
 
-                                        <div class="form-group clearfix">
-                                            <label class="form-label">用户名:</label>
-                                            <div class="form-input-wrapper">
-                                                <input type="text" name="username" class="form-input"
-                                                    value="<%= username %>" placeholder="请输入用户名">
-                                            </div>
-                                        </div>
+                                                <% if (profileError !=null) { %>
+                                                    <div
+                                                        style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
+                                                        ✗ <%= profileError %>
+                                                    </div>
+                                                    <% } %>
 
-                                        <div class="form-group clearfix">
-                                            <label class="form-label">旧密码:</label>
-                                            <div class="form-input-wrapper">
-                                                <input type="password" name="oldPassword" class="form-input"
-                                                    placeholder="留空，若提交时为空则不修改密码">
-                                            </div>
-                                        </div>
+                                                        <form id="profileForm" method="post"
+                                                            action="${pageContext.request.contextPath}/UpdateProfileServlet">
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">用户ID:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="text" class="form-input"
+                                                                        value="<%= request.getAttribute("profileUserId") !=null ?
+                                                                        request.getAttribute("profileUserId") :
+                                                                        session.getAttribute("userId") %>"
+                                                                    disabled placeholder="用户ID，不可修改">
+                                                                </div>
+                                                            </div>
 
-                                        <div class="form-group clearfix">
-                                            <label class="form-label">新密码:</label>
-                                            <div class="form-input-wrapper">
-                                                <input type="password" name="newPassword" class="form-input"
-                                                    placeholder="留空，若提交时为空则不修改密码">
-                                            </div>
-                                        </div>
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">用户名:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="text" name="username"
+                                                                        class="form-input" value="<%= username %>"
+                                                                        placeholder="请输入用户名">
+                                                                </div>
+                                                            </div>
 
-                                        <div class="form-group clearfix">
-                                            <label class="form-label">邮箱:</label>
-                                            <div class="form-input-wrapper">
-                                                <% User user=(User) request.getAttribute("profileUser"); if (user==null)
-                                                    user=(User) session.getAttribute("user"); %>
-                                                    <input type="email" name="email" class="form-input"
-                                                        value="<%= user != null && user.getEmail() != null ? user.getEmail() : "" %>"
-                                                        placeholder="请输入邮箱">
-                                            </div>
-                                        </div>
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">旧密码:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="password" name="oldPassword"
+                                                                        class="form-input"
+                                                                        placeholder="留空，若提交时为空则不修改密码">
+                                                                </div>
+                                                            </div>
 
-                                        <div class="form-group clearfix">
-                                            <label class="form-label">手机:</label>
-                                            <div class="form-input-wrapper">
-                                                <input type="tel" name="phone" class="form-input"
-                                                    value="<%= user != null && user.getPhone() != null ? user.getPhone() : "" %>"
-                                                    placeholder="请输入手机号">
-                                            </div>
-                                        </div>
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">新密码:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="password" name="newPassword"
+                                                                        id="newPassword" class="form-input"
+                                                                        placeholder="留空，若提交时为空则不修改密码">
+                                                                </div>
+                                                            </div>
 
-                                        <div class="form-actions">
-                                            <button type="submit" class="btn btn-primary">✓ 提交修改</button>
-                                            <button type="reset" class="btn btn-secondary">重置</button>
-                                        </div>
-                                    </form>
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">确认新密码:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="password" name="confirmPassword"
+                                                                        id="confirmPassword" class="form-input"
+                                                                        placeholder="请再次输入新密码">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">邮箱:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <% User user=(User)
+                                                                        request.getAttribute("profileUser"); if
+                                                                        (user==null) user=(User)
+                                                                        session.getAttribute("user"); %>
+                                                                        <input type="email" name="email"
+                                                                            class="form-input"
+                                                                            value="<%= user != null && user.getEmail() != null ? user.getEmail() : "" %>"
+                                                                            placeholder="请输入邮箱">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">手机:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="tel" name="phone" class="form-input"
+                                                                        value="<%= user != null && user.getPhone() != null ? user.getPhone() : "" %>"
+                                                                        placeholder="请输入手机号">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-actions">
+                                                                <button type="submit" class="btn btn-primary">✓
+                                                                    提交修改</button>
+                                                                <button type="reset"
+                                                                    class="btn btn-secondary">重置</button>
+                                                            </div>
+                                                        </form>
                                 </div>
 
                                 <!-- 账单页面 -->
@@ -555,10 +591,50 @@
                                 }
                             }
 
+                            // 密码实时验证
+                            function validatePasswords() {
+                                const newPassword = document.getElementById('newPassword').value;
+                                const confirmPassword = document.getElementById('confirmPassword').value;
+                                const confirmInput = document.getElementById('confirmPassword');
+
+                                if (confirmPassword && newPassword !== confirmPassword) {
+                                    confirmInput.style.borderColor = '#ff4d4f';
+                                    confirmInput.style.boxShadow = '0 0 0 2px rgba(255, 77, 79, 0.1)';
+                                } else if (confirmPassword) {
+                                    confirmInput.style.borderColor = '#52c41a';
+                                    confirmInput.style.boxShadow = '0 0 0 2px rgba(82, 196, 26, 0.1)';
+                                } else {
+                                    confirmInput.style.borderColor = '#d9d9d9';
+                                    confirmInput.style.boxShadow = 'none';
+                                }
+                            }
+
+                            // 为密码字段添加实时验证
+                            document.getElementById('newPassword').addEventListener('input', validatePasswords);
+                            document.getElementById('confirmPassword').addEventListener('input', validatePasswords);
+
                             // 表单提交处理
                             document.getElementById('profileForm').addEventListener('submit', function (e) {
-                                e.preventDefault();
-                                alert('个人信息修改功能开发中...');
+                                const newPassword = document.getElementById('newPassword').value;
+                                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                                // 如果输入了新密码，检查确认密码
+                                if (newPassword || confirmPassword) {
+                                    if (newPassword !== confirmPassword) {
+                                        e.preventDefault();
+                                        alert('新密码和确认密码不一致，请重新输入！');
+                                        return false;
+                                    }
+
+                                    if (newPassword.length < 6) {
+                                        e.preventDefault();
+                                        alert('新密码长度不能少于6位！');
+                                        return false;
+                                    }
+                                }
+
+                                // 验证通过，允许表单提交
+                                return true;
                             });
                         </script>
                 </body>
