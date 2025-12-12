@@ -2,6 +2,7 @@ package com.TaoDuoDuo.servlet;
 
 import com.TaoDuoDuo.entity.User;
 import com.TaoDuoDuo.service.UserService;
+import com.TaoDuoDuo.service.UserRoleService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,10 +16,12 @@ import java.util.Optional;
 @WebServlet(name = "LoginServlet", value = "/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private UserService userService;
+    private UserRoleService userRoleService;
 
     @Override
     public void init() throws ServletException {
         userService = new UserService();
+        userRoleService = new UserRoleService();
     }
 
     @Override
@@ -50,6 +53,12 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", user);
             session.setAttribute("userId", user.getUser_id());
             session.setAttribute("username", user.getUsername());
+
+            // 确保用户至少有一个角色（用户角色）
+            if (!userRoleService.hasRole(user.getUser_id(), 1)) {
+                userRoleService.addUserRole(user.getUser_id(), 1);
+            }
+
             // 默认以用户身份登录 (1-用户，2-商家，3-管理员)
             session.setAttribute("role", 1);
 
