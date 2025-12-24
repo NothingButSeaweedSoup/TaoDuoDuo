@@ -370,20 +370,23 @@
                                 <ul class="menu-list">
                                     <li class="menu-item">
                                         <a href="#" class="menu-link active" onclick="showContent('personal-info')">
-                                            <span class="menu-icon">👤</span>
+                                            <img src="${pageContext.request.contextPath}/icon/UserInfo.png" alt="个人信息"
+                                                class="menu-icon">
                                             个人信息
                                         </a>
                                     </li>
                                     <li class="menu-item">
                                         <a href="#" class="menu-link" onclick="showContent('orders')">
-                                            <span class="menu-icon">📋</span>
+                                            <img src="${pageContext.request.contextPath}/icon/BillInquiry.png" alt="账单"
+                                                class="menu-icon">
                                             账单
                                         </a>
                                     </li>
                                     <% if (userRole !=null && userRole==1) { %>
                                         <li class="menu-item">
                                             <a href="${pageContext.request.contextPath}/CartServlet" class="menu-link">
-                                                <span class="menu-icon">🛒</span>
+                                                <img src="${pageContext.request.contextPath}/icon/category.png" alt="购物车"
+                                                    class="menu-icon">
                                                 购物车
                                             </a>
                                         </li>
@@ -391,14 +394,16 @@
                                             <% if (canSwitchRole !=null && canSwitchRole) { %>
                                                 <li class="menu-item">
                                                     <a href="#" class="menu-link" onclick="showContent('role-switch')">
-                                                        <span class="menu-icon">🔄</span>
+                                                        <img src="${pageContext.request.contextPath}/icon/RoleChange.png"
+                                                            alt="角色切换" class="menu-icon">
                                                         角色切换
                                                     </a>
                                                 </li>
                                                 <% } %>
                                                     <li class="menu-item">
                                                         <a href="#" class="menu-link" onclick="showContent('merchant')">
-                                                            <span class="menu-icon">🏪</span>
+                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                alt="商家入驻" class="menu-icon">
                                                             商家入驻
                                                         </a>
                                                     </li>
@@ -513,7 +518,10 @@
                                 <div id="orders" class="content-section" style="display: none;">
                                     <h2 class="content-title">我的账单</h2>
                                     <div style="text-align: center; padding: 60px 0; color: #8c8c8c;">
-                                        <div style="font-size: 48px; margin-bottom: 20px;">📋</div>
+                                        <div style="font-size: 48px; margin-bottom: 20px;">
+                                            <img src="${pageContext.request.contextPath}/icon/BillInquiry.png" alt="账单"
+                                                style="width: 48px; height: 48px;">
+                                        </div>
                                         <div>账单功能开发中...</div>
                                     </div>
                                 </div>
@@ -571,7 +579,9 @@
 
                                                             <div
                                                                 style="text-align: center; padding: 40px 0; color: #8c8c8c;">
-                                                                <div style="font-size: 48px; margin-bottom: 20px;">🔄
+                                                                <div style="font-size: 48px; margin-bottom: 20px;">
+                                                                    <img src="${pageContext.request.contextPath}/icon/RoleChange.png"
+                                                                        alt="角色切换" style="width: 48px; height: 48px;">
                                                                 </div>
                                                                 <div>选择您要切换到的身份</div>
                                                                 <div
@@ -586,110 +596,151 @@
                                     <h2 class="content-title">商家入驻</h2>
 
                                     <!-- 消息显示 -->
-                                    <% String merchantSuccess = (String) request.getAttribute("success");
-                                       String merchantError = (String) request.getAttribute("error");
-                                       String shopName = (String) request.getAttribute("shopName");
-                                    %>
-                                    
-                                    <% if (merchantSuccess != null && "merchant_application_success".equals(merchantSuccess)) { %>
-                                        <div class="merchant-success">
-                                            <div style="font-size: 24px; margin-bottom: 10px;">🎉</div>
-                                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">恭喜！商家入驻申请成功</div>
-                                            <div style="font-size: 14px;">店铺名称：<%= shopName %></div>
-                                            <div style="font-size: 14px; margin-top: 5px; color: #389e0d;">您已自动获得商家角色，可以开始管理您的店铺了</div>
-                                        </div>
-                                    <% } %>
+                                    <% String merchantSuccess=(String) request.getAttribute("success"); String
+                                        merchantError=(String) request.getAttribute("error"); String shopName=(String)
+                                        request.getAttribute("shopName"); %>
 
-                                    <% if (merchantError != null) { %>
-                                        <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
-                                            ✗ <%= merchantError %>
-                                        </div>
-                                    <% } %>
-
-                                    <% if (userRole != null && userRole == 2) { %>
-                                        <!-- 已经是商家，可以创建新店铺 -->
-                                        <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 20px; margin-bottom: 25px; color: #52c41a; text-align: center;">
-                                            <div style="font-size: 24px; margin-bottom: 10px;">✅</div>
-                                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">您已经是商家</div>
-                                            <div style="font-size: 14px; color: #389e0d;">您可以创建新的店铺或在商铺管理中管理现有店铺</div>
-                                        </div>
-                                        
-                                        <!-- 创建新店铺表单 -->
-                                        <div class="merchant-form-container">
-                                            <div class="merchant-notice">
-                                                <h3>🏪 创建新店铺</h3>
-                                                <ul>
-                                                    <li>您可以创建多个店铺</li>
-                                                    <li>店铺名称可以在商铺管理中修改</li>
-                                                    <li>店铺名称长度需在2-50个字符之间</li>
-                                                    <li>店铺名称不能与现有店铺重复</li>
-                                                </ul>
+                                        <% if (merchantSuccess !=null && "merchant_application_success"
+                                            .equals(merchantSuccess)) { %>
+                                            <div class="merchant-success">
+                                                <div style="font-size: 24px; margin-bottom: 10px;">
+                                                    <img src="${pageContext.request.contextPath}/icon/RoleSelected.png"
+                                                        alt="成功" style="width: 48px; height: 48px;">
+                                                </div>
+                                                <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                                                    恭喜！商家入驻申请成功</div>
+                                                <div style="font-size: 14px;">店铺名称：<%= shopName %>
+                                                </div>
+                                                <div style="font-size: 14px; margin-top: 5px; color: #389e0d;">
+                                                    您已自动获得商家角色，可以开始管理您的店铺了</div>
                                             </div>
+                                            <% } %>
 
-                                            <form id="merchantForm" method="post" action="${pageContext.request.contextPath}/MerchantApplicationServlet">
-                                                <div class="form-group clearfix">
-                                                    <label class="form-label">用户ID:</label>
-                                                    <div class="form-input-wrapper">
-                                                        <input type="text" class="form-input" 
-                                                               value="<%= session.getAttribute("userId") %>" 
-                                                               disabled placeholder="自动关联当前用户">
+                                                <% if (merchantError !=null) { %>
+                                                    <div
+                                                        style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
+                                                        ✗ <%= merchantError %>
                                                     </div>
-                                                </div>
+                                                    <% } %>
 
-                                                <div class="form-group clearfix">
-                                                    <label class="form-label">店铺名称:</label>
-                                                    <div class="form-input-wrapper">
-                                                        <input type="text" name="shopName" class="form-input" 
-                                                               placeholder="请输入新店铺的名称" required 
-                                                               maxlength="50" minlength="2">
-                                                    </div>
-                                                </div>
+                                                        <% if (userRole !=null && userRole==2) { %>
+                                                            <!-- 已经是商家，可以创建新店铺 -->
+                                                            <div
+                                                                style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 20px; margin-bottom: 25px; color: #52c41a; text-align: center;">
+                                                                <div style="font-size: 24px; margin-bottom: 10px;">
+                                                                    <img src="${pageContext.request.contextPath}/icon/RoleSelected.png"
+                                                                        alt="已选择角色" style="width: 48px; height: 48px;">
+                                                                </div>
+                                                                <div
+                                                                    style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                                                                    您已经是商家</div>
+                                                                <div style="font-size: 14px; color: #389e0d;">
+                                                                    您可以创建新的店铺或在商铺管理中管理现有店铺</div>
+                                                            </div>
 
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-primary">🏪 创建新店铺</button>
-                                                    <button type="reset" class="btn btn-secondary">重置</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    <% } else { %>
-                                        <!-- 商家入驻申请表单 -->
-                                        <div class="merchant-form-container">
-                                            <div class="merchant-notice">
-                                                <h3>📋 入驻须知</h3>
-                                                <ul>
-                                                    <li>提交申请后将自动获得商家角色</li>
-                                                    <li>店铺名称可以在商铺管理中修改</li>
-                                                    <li>店铺名称长度需在2-50个字符之间</li>
-                                                    <li>店铺名称不能与现有店铺重复</li>
-                                                </ul>
-                                            </div>
+                                                            <!-- 创建新店铺表单 -->
+                                                            <div class="merchant-form-container">
+                                                                <div class="merchant-notice">
+                                                                    <h3>
+                                                                        <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                            alt="创建店铺"
+                                                                            style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
+                                                                        创建新店铺
+                                                                    </h3>
+                                                                    <ul>
+                                                                        <li>您可以创建多个店铺</li>
+                                                                        <li>店铺名称可以在商铺管理中修改</li>
+                                                                        <li>店铺名称长度需在2-50个字符之间</li>
+                                                                        <li>店铺名称不能与现有店铺重复</li>
+                                                                    </ul>
+                                                                </div>
 
-                                            <form id="merchantForm" method="post" action="${pageContext.request.contextPath}/MerchantApplicationServlet">
-                                                <div class="form-group clearfix">
-                                                    <label class="form-label">用户ID:</label>
-                                                    <div class="form-input-wrapper">
-                                                        <input type="text" class="form-input" 
-                                                               value="<%= session.getAttribute("userId") %>" 
-                                                               disabled placeholder="自动关联当前用户">
-                                                    </div>
-                                                </div>
+                                                                <form id="createShopForm" method="post"
+                                                                    action="${pageContext.request.contextPath}/MerchantApplicationServlet">
+                                                                    <div class="form-group clearfix">
+                                                                        <label class="form-label">用户ID:</label>
+                                                                        <div class="form-input-wrapper">
+                                                                            <input type="text" class="form-input"
+                                                                                value="<%= session.getAttribute("userId") %>"
+                                                                            disabled placeholder="自动关联当前用户">
+                                                                        </div>
+                                                                    </div>
 
-                                                <div class="form-group clearfix">
-                                                    <label class="form-label">店铺名称:</label>
-                                                    <div class="form-input-wrapper">
-                                                        <input type="text" name="shopName" class="form-input" 
-                                                               placeholder="请输入您的店铺名称" required 
-                                                               maxlength="50" minlength="2">
-                                                    </div>
-                                                </div>
+                                                                    <div class="form-group clearfix">
+                                                                        <label class="form-label">店铺名称:</label>
+                                                                        <div class="form-input-wrapper">
+                                                                            <input type="text" name="shopName"
+                                                                                class="form-input"
+                                                                                placeholder="请输入新店铺的名称" required
+                                                                                maxlength="50" minlength="2">
+                                                                        </div>
+                                                                    </div>
 
-                                                <div class="form-actions">
-                                                    <button type="submit" class="btn btn-primary">🏪 申请入驻</button>
-                                                    <button type="reset" class="btn btn-secondary">重置</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    <% } %>
+                                                                    <div class="form-actions">
+                                                                        <button type="submit" class="btn btn-primary">
+                                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                                alt="创建"
+                                                                                style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+                                                                            创建新店铺
+                                                                        </button>
+                                                                        <button type="reset"
+                                                                            class="btn btn-secondary">重置</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <% } else { %>
+                                                                <!-- 商家入驻申请表单 -->
+                                                                <div class="merchant-form-container">
+                                                                    <div class="merchant-notice">
+                                                                        <h3>
+                                                                            <img src="${pageContext.request.contextPath}/icon/BillInquiry.png"
+                                                                                alt="须知"
+                                                                                style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
+                                                                            入驻须知
+                                                                        </h3>
+                                                                        <ul>
+                                                                            <li>提交申请后将自动获得商家角色</li>
+                                                                            <li>店铺名称可以在商铺管理中修改</li>
+                                                                            <li>店铺名称长度需在2-50个字符之间</li>
+                                                                            <li>店铺名称不能与现有店铺重复</li>
+                                                                        </ul>
+                                                                    </div>
+
+                                                                    <form id="merchantApplicationForm" method="post"
+                                                                        action="${pageContext.request.contextPath}/MerchantApplicationServlet">
+                                                                        <div class="form-group clearfix">
+                                                                            <label class="form-label">用户ID:</label>
+                                                                            <div class="form-input-wrapper">
+                                                                                <input type="text" class="form-input"
+                                                                                    value="<%= session.getAttribute("userId") %>"
+                                                                                disabled placeholder="自动关联当前用户">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="form-group clearfix">
+                                                                            <label class="form-label">店铺名称:</label>
+                                                                            <div class="form-input-wrapper">
+                                                                                <input type="text" name="shopName"
+                                                                                    class="form-input"
+                                                                                    placeholder="请输入您的店铺名称" required
+                                                                                    maxlength="50" minlength="2">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="form-actions">
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">
+                                                                                <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                                    alt="申请"
+                                                                                    style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+                                                                                申请入驻
+                                                                            </button>
+                                                                            <button type="reset"
+                                                                                class="btn btn-secondary">重置</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                                <% } %>
                                 </div>
                             </div>
                         </div>
@@ -782,49 +833,53 @@
                             });
 
                             // 商家入驻表单验证
-                            const merchantForm = document.getElementById('merchantForm');
-                            if (merchantForm) {
-                                merchantForm.addEventListener('submit', function (e) {
-                                    const shopName = document.querySelector('input[name="shopName"]').value.trim();
-                                    
-                                    if (!shopName) {
-                                        e.preventDefault();
-                                        alert('请输入店铺名称！');
-                                        return false;
-                                    }
-                                    
-                                    if (shopName.length < 2) {
-                                        e.preventDefault();
-                                        alert('店铺名称长度不能少于2个字符！');
-                                        return false;
-                                    }
-                                    
-                                    if (shopName.length > 50) {
-                                        e.preventDefault();
-                                        alert('店铺名称长度不能超过50个字符！');
-                                        return false;
-                                    }
-                                    
-                                    // 检查当前用户角色，显示不同的确认对话框
-                                    const userRole = <%= userRole != null ? userRole : 0 %>;
-                                    let confirmMessage;
-                                    
-                                    if (userRole == 2) {
-                                        // 已经是商家，创建新店铺
-                                        confirmMessage = '确定要创建新店铺吗？\n店铺名称：' + shopName + '\n\n您可以在商铺管理中修改店铺名称';
-                                    } else {
-                                        // 申请入驻商家
-                                        confirmMessage = '确定要申请入驻商家吗？\n店铺名称：' + shopName + '\n\n申请成功后可在商铺管理中修改店铺名称';
-                                    }
-                                    
-                                    if (!confirm(confirmMessage)) {
-                                        e.preventDefault();
-                                        return false;
-                                    }
-                                    
-                                    return true;
-                                });
+                            function addMerchantFormValidation(formId, isCreateShop) {
+                                const form = document.getElementById(formId);
+                                if (form) {
+                                    form.addEventListener('submit', function (e) {
+                                        const shopName = this.querySelector('input[name="shopName"]').value.trim();
+
+                                        if (!shopName) {
+                                            e.preventDefault();
+                                            alert('请输入店铺名称！');
+                                            return false;
+                                        }
+
+                                        if (shopName.length < 2) {
+                                            e.preventDefault();
+                                            alert('店铺名称长度不能少于2个字符！');
+                                            return false;
+                                        }
+
+                                        if (shopName.length > 50) {
+                                            e.preventDefault();
+                                            alert('店铺名称长度不能超过50个字符！');
+                                            return false;
+                                        }
+
+                                        // 根据表单类型显示不同的确认对话框
+                                        let confirmMessage;
+                                        if (isCreateShop) {
+                                            // 创建新店铺
+                                            confirmMessage = '确定要创建新店铺吗？\n店铺名称：' + shopName + '\n\n您可以在商铺管理中修改店铺名称';
+                                        } else {
+                                            // 申请入驻商家
+                                            confirmMessage = '确定要申请入驻商家吗？\n店铺名称：' + shopName + '\n\n申请成功后可在商铺管理中修改店铺名称';
+                                        }
+
+                                        if (!confirm(confirmMessage)) {
+                                            e.preventDefault();
+                                            return false;
+                                        }
+
+                                        return true;
+                                    });
+                                }
                             }
+
+                            // 为两个表单分别添加验证
+                            addMerchantFormValidation('createShopForm', true);  // 创建新店铺表单
+                            addMerchantFormValidation('merchantApplicationForm', false);  // 申请入驻表单
                         </script>
                 </body>
 

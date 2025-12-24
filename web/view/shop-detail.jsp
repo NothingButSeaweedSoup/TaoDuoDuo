@@ -626,7 +626,12 @@
                                                             <div class="content-grid">
                                                                 <!-- 左侧：添加商品 -->
                                                                 <div class="content-card">
-                                                                    <h2 class="card-title">📦 添加新商品</h2>
+                                                                    <h2 class="card-title">
+                                                                        <img src="${pageContext.request.contextPath}/icon/AddProduct.png"
+                                                                            alt="添加商品"
+                                                                            style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
+                                                                        添加新商品
+                                                                    </h2>
 
                                                                     <form method="post"
                                                                         action="${pageContext.request.contextPath}/ShopDetailServlet">
@@ -670,7 +675,10 @@
 
                                                                         <button type="submit" class="btn btn-primary"
                                                                             style="width: 100%;">
-                                                                            📦 添加商品
+                                                                            <img src="${pageContext.request.contextPath}/icon/AddProduct.png"
+                                                                                alt="添加"
+                                                                                style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+                                                                            添加商品
                                                                         </button>
                                                                     </form>
                                                                 </div>
@@ -880,12 +888,18 @@
                                                                                             <button type="button"
                                                                                                 class="upload-btn"
                                                                                                 onclick="document.getElementById('imageInput-<%= product.getProduct_id() %>').click()">
+                                                                                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
+                                                                                                    alt="选择"
+                                                                                                    style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                                                                 选择图片
                                                                                             </button>
                                                                                             <button type="button"
                                                                                                 class="btn btn-success"
                                                                                                 onclick="uploadImages(<%= product.getProduct_id() %>)"
                                                                                                 style="margin-left: 10px;">
+                                                                                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
+                                                                                                    alt="上传"
+                                                                                                    style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                                                                 上传图片
                                                                                             </button>
                                                                                         </div>

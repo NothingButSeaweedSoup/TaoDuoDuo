@@ -246,10 +246,15 @@
                         <input type="hidden" name="productId" value="${param.productId}">
 
                         <div class="upload-area" id="uploadArea">
-                            <div class="upload-icon">📷</div>
+                            <div class="upload-icon">
+                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png" alt="上传图片"
+                                    style="width: 48px; height: 48px;">
+                            </div>
                             <div class="upload-text">点击下方按钮选择图片文件</div>
                             <button type="button" class="upload-btn"
                                 onclick="document.getElementById('fileInput').click()">
+                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png" alt="选择"
+                                    style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
                                 选择图片
                             </button>
                             <input type="file" id="fileInput" name="images" class="file-input" multiple accept="image/*"

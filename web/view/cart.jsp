@@ -277,7 +277,10 @@
 
                                 <% if (isEmpty) { %>
                                     <div class="empty-cart">
-                                        <div class="empty-cart-icon">🛒</div>
+                                        <div class="empty-cart-icon">
+                                            <img src="<%= request.getContextPath() %>/icon/category.png" alt="购物车"
+                                                style="width: 80px; height: 80px;">
+                                        </div>
                                         <div class="empty-cart-text">购物车是空的</div>
                                         <a href="<%= request.getContextPath() %>/index.jsp"
                                             class="continue-shopping">去逛逛</a>
