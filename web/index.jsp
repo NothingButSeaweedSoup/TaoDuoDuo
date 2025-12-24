@@ -261,13 +261,71 @@
                             .category-sidebar {
                                 flex: 1;
                                 height: 300px;
-                                background-color: #a8a8a8;
+                                background-color: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                                overflow: hidden;
+                            }
+
+                            .category-header {
+                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                color: white;
+                                padding: 15px 20px;
+                                font-size: 16px;
+                                font-weight: 600;
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                            }
+
+                            .category-icon {
+                                width: 20px;
+                                height: 20px;
+                            }
+
+                            .category-list {
+                                height: calc(100% - 50px);
+                                overflow-y: auto;
+                                padding: 0;
+                            }
+
+                            .category-item {
+                                display: block;
+                                padding: 12px 20px;
+                                color: #333;
+                                text-decoration: none;
+                                border-bottom: 1px solid #f0f0f0;
+                                transition: all 0.3s;
+                                font-size: 14px;
+                                position: relative;
+                            }
+
+                            .category-item:hover {
+                                background-color: #f8f9fa;
+                                color: #4285f4;
+                                padding-left: 25px;
+                            }
+
+                            .category-item:last-child {
+                                border-bottom: none;
+                            }
+
+                            .category-arrow {
+                                position: absolute;
+                                right: 15px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                font-size: 12px;
+                                color: #999;
+                            }
+
+                            .category-loading {
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
-                                color: #333;
-                                font-size: 20px;
-                                font-weight: bold;
+                                height: 100%;
+                                color: #666;
+                                font-size: 14px;
                             }
 
                             /* 商品网格 */
@@ -394,7 +452,14 @@
 
                                     <!-- 分类侧边栏 -->
                                     <div class="category-sidebar">
-                                        分类
+                                        <div class="category-header">
+                                            <img src="${pageContext.request.contextPath}/icon/category.png" alt="分类"
+                                                class="category-icon">
+                                            商品分类
+                                        </div>
+                                        <div class="category-list" id="categoryList">
+                                            <div class="category-loading">加载中...</div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -529,6 +594,40 @@
                             if (event.key === 'Enter') {
                                 performSearch();
                             }
+                        });
+
+                        // 加载分类列表
+                        function loadCategories() {
+                            const categoryList = document.getElementById('categoryList');
+
+                            fetch('${pageContext.request.contextPath}/CategoryServlet?action=getCategories')
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success && data.categories) {
+                                        let html = '';
+                                        data.categories.forEach(category => {
+                                            html += `
+                                                <a href="${pageContext.request.contextPath}/CategoryServlet?id=\${category.id}" 
+                                                   class="category-item">
+                                                    \${category.name}
+                                                    <span class="category-arrow">›</span>
+                                                </a>
+                                            `;
+                                        });
+                                        categoryList.innerHTML = html;
+                                    } else {
+                                        categoryList.innerHTML = '<div class="category-loading">暂无分类</div>';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('加载分类失败:', error);
+                                    categoryList.innerHTML = '<div class="category-loading">加载失败</div>';
+                                });
+                        }
+
+                        // 页面加载完成后加载分类
+                        document.addEventListener('DOMContentLoaded', function () {
+                            loadCategories();
                         });
                     </script>
 

@@ -367,4 +367,304 @@ public class ProductDao {
         }
         return Optional.empty();
     }
+
+    /**
+     * 扣除商品库存（支付成功后调用）
+     * 使用乐观锁防止并发问题
+     * 
+     * @param product_id 商品ID
+     * @param quantity   扣除数量
+     * @return StockUpdateResult 库存更新结果
+     */
+    public StockUpdateResult decreaseStock(int product_id, int quantity) {
+        if (quantity <= 0) {
+            return new StockUpdateResult(false, "扣除数量必须大于0", 0);
+        }
+
+        String sql = "UPDATE product SET stock = stock - ? WHERE product_id = ? AND stock >= ? AND product_listing = true";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, quantity);
+            ps.setInt(2, product_id);
+            ps.setInt(3, quantity);
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows > 0) {
+                // 查询更新后的库存
+                int newStock = getCurrentStock(product_id);
+                DBUtil.close(null, ps, conn);
+                return new StockUpdateResult(true, "库存扣除成功", newStock);
+            } else {
+                DBUtil.close(null, ps, conn);
+                // 检查具体失败原因
+                Optional<Product> productOpt = getProductById(product_id);
+                if (!productOpt.isPresent()) {
+                    return new StockUpdateResult(false, "商品不存在", 0);
+                }
+
+                Product product = productOpt.get();
+                if (!product.isProduct_listing()) {
+                    return new StockUpdateResult(false, "商品已下架", product.getStock());
+                }
+
+                if (product.getStock() < quantity) {
+                    return new StockUpdateResult(false, "库存不足，当前库存：" + product.getStock(), product.getStock());
+                }
+
+                return new StockUpdateResult(false, "库存扣除失败", product.getStock());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new StockUpdateResult(false, "数据库操作异常：" + e.getMessage(), 0);
+        }
+    }
+
+    /**
+     * 增加商品库存（退款或取消订单时调用）
+     * 
+     * @param product_id 商品ID
+     * @param quantity   增加数量
+     * @return StockUpdateResult 库存更新结果
+     */
+    public StockUpdateResult increaseStock(int product_id, int quantity) {
+        if (quantity <= 0) {
+            return new StockUpdateResult(false, "增加数量必须大于0", 0);
+        }
+
+        String sql = "UPDATE product SET stock = stock + ? WHERE product_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, quantity);
+            ps.setInt(2, product_id);
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows > 0) {
+                int newStock = getCurrentStock(product_id);
+                DBUtil.close(null, ps, conn);
+                return new StockUpdateResult(true, "库存增加成功", newStock);
+            } else {
+                DBUtil.close(null, ps, conn);
+                return new StockUpdateResult(false, "商品不存在", 0);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new StockUpdateResult(false, "数据库操作异常：" + e.getMessage(), 0);
+        }
+    }
+
+    /**
+     * 批量扣除库存（多商品订单）
+     * 
+     * @param stockUpdates 库存更新列表
+     * @return BatchStockUpdateResult 批量更新结果
+     */
+    public BatchStockUpdateResult batchDecreaseStock(List<StockUpdate> stockUpdates) {
+        BatchStockUpdateResult result = new BatchStockUpdateResult();
+        Connection conn = DBUtil.getConnection();
+
+        try {
+            // 开启事务
+            conn.setAutoCommit(false);
+
+            for (StockUpdate update : stockUpdates) {
+                StockUpdateResult singleResult = decreaseStockInTransaction(conn, update.getProductId(),
+                        update.getQuantity());
+                result.addResult(update.getProductId(), singleResult);
+
+                if (!singleResult.isSuccess()) {
+                    // 如果任何一个商品库存扣除失败，回滚整个事务
+                    conn.rollback();
+                    result.setOverallSuccess(false);
+                    result.setErrorMessage("商品ID " + update.getProductId() + " 库存扣除失败：" + singleResult.getMessage());
+                    return result;
+                }
+            }
+
+            // 所有商品库存扣除成功，提交事务
+            conn.commit();
+            result.setOverallSuccess(true);
+
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+            result.setOverallSuccess(false);
+            result.setErrorMessage("批量库存扣除异常：" + e.getMessage());
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 在事务中扣除库存（内部方法）
+     */
+    private StockUpdateResult decreaseStockInTransaction(Connection conn, int product_id, int quantity)
+            throws SQLException {
+        String sql = "UPDATE product SET stock = stock - ? WHERE product_id = ? AND stock >= ? AND product_listing = true";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, quantity);
+        ps.setInt(2, product_id);
+        ps.setInt(3, quantity);
+
+        int affectedRows = ps.executeUpdate();
+        ps.close();
+
+        if (affectedRows > 0) {
+            int newStock = getCurrentStockInTransaction(conn, product_id);
+            return new StockUpdateResult(true, "库存扣除成功", newStock);
+        } else {
+            // 检查失败原因
+            Optional<Product> productOpt = getProductById(product_id);
+            if (!productOpt.isPresent()) {
+                return new StockUpdateResult(false, "商品不存在", 0);
+            }
+
+            Product product = productOpt.get();
+            if (!product.isProduct_listing()) {
+                return new StockUpdateResult(false, "商品已下架", product.getStock());
+            }
+
+            if (product.getStock() < quantity) {
+                return new StockUpdateResult(false, "库存不足，当前库存：" + product.getStock(), product.getStock());
+            }
+
+            return new StockUpdateResult(false, "库存扣除失败", product.getStock());
+        }
+    }
+
+    /**
+     * 获取当前库存数量
+     */
+    private int getCurrentStock(int product_id) {
+        String sql = "SELECT stock FROM product WHERE product_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, product_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int stock = rs.getInt("stock");
+                DBUtil.close(rs, ps, conn);
+                return stock;
+            }
+            DBUtil.close(rs, ps, conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * 在事务中获取当前库存数量
+     */
+    private int getCurrentStockInTransaction(Connection conn, int product_id) throws SQLException {
+        String sql = "SELECT stock FROM product WHERE product_id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, product_id);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            int stock = rs.getInt("stock");
+            rs.close();
+            ps.close();
+            return stock;
+        }
+        rs.close();
+        ps.close();
+        return 0;
+    }
+
+    /**
+     * 库存更新结果类
+     */
+    public static class StockUpdateResult {
+        private final boolean success;
+        private final String message;
+        private final int currentStock;
+
+        public StockUpdateResult(boolean success, String message, int currentStock) {
+            this.success = success;
+            this.message = message;
+            this.currentStock = currentStock;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public int getCurrentStock() {
+            return currentStock;
+        }
+    }
+
+    /**
+     * 库存更新项类
+     */
+    public static class StockUpdate {
+        private final int productId;
+        private final int quantity;
+
+        public StockUpdate(int productId, int quantity) {
+            this.productId = productId;
+            this.quantity = quantity;
+        }
+
+        public int getProductId() {
+            return productId;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+    }
+
+    /**
+     * 批量库存更新结果类
+     */
+    public static class BatchStockUpdateResult {
+        private boolean overallSuccess = true;
+        private String errorMessage = "";
+        private final java.util.Map<Integer, StockUpdateResult> results = new java.util.HashMap<>();
+
+        public void addResult(int productId, StockUpdateResult result) {
+            results.put(productId, result);
+        }
+
+        public boolean isOverallSuccess() {
+            return overallSuccess;
+        }
+
+        public void setOverallSuccess(boolean success) {
+            this.overallSuccess = success;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String message) {
+            this.errorMessage = message;
+        }
+
+        public java.util.Map<Integer, StockUpdateResult> getResults() {
+            return results;
+        }
+    }
 }

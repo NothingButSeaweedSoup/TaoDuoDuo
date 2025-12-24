@@ -14,22 +14,15 @@ public class ProductDetailService {
 
     public Optional<List<Review>> getProductReviews(int product_id) {
         ReviewDao reviewDao = new ReviewDao();
-        OrderDetailDao orderDetailDao = new OrderDetailDao();
 
-        // 1. 先查询订单详情
-        Optional<List<OrderDetail>> orderDetailsOpt = orderDetailDao.getOrderDetailByProductId(product_id);
-
-        // 2. 检查是否有订单数据
-        if (orderDetailsOpt.isEmpty() || orderDetailsOpt.get().isEmpty()) {
-            System.out.println("商品ID: " + product_id + " 暂无订单记录，无法查询评价");
-            return Optional.empty(); // 返回空Optional而不是抛出异常
+        try {
+            // 直接通过商品ID查询评论
+            return reviewDao.getReviewsByProductId(product_id);
+        } catch (Exception e) {
+            System.err.println("查询商品评论异常: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
         }
-
-        // 3. 安全地获取第一个订单ID
-        int orderId = orderDetailsOpt.get().get(0).getOrder_id();
-        Optional<List<Review>> reviews = reviewDao.getReviewsByUserId(orderId);
-
-        return reviews;
     }
 
     public boolean checkStock(int product_id, int quantity) {

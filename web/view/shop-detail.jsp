@@ -655,6 +655,19 @@
                                                                                 required></textarea>
                                                                         </div>
 
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">商品分类:</label>
+                                                                            <select name="categoryId"
+                                                                                class="form-input">
+                                                                                <option value="3">毛绒玩具</option>
+                                                                                <option value="4">食品</option>
+                                                                                <option value="5">数码</option>
+                                                                                <option value="6">电脑</option>
+                                                                                <option value="7">电脑配件</option>
+                                                                                <option value="8" selected>其他商品</option>
+                                                                            </select>
+                                                                        </div>
+
                                                                         <div class="form-row">
                                                                             <div class="form-group">
                                                                                 <label class="form-label">价格

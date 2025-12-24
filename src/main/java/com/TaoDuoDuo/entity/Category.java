@@ -14,10 +14,10 @@ public class Category {
         this.category_name = category_name;
     }
 
-    public Category(int parent_id, String category_name, int category_id) {
-        this.parent_id = parent_id;
-        this.category_name = category_name;
+    public Category(int category_id, String category_name, int parent_id) {
         this.category_id = category_id;
+        this.category_name = category_name;
+        this.parent_id = parent_id;
     }
 
     public Category() {
