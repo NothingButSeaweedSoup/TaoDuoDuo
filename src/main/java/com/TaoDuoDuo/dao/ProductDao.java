@@ -332,4 +332,39 @@ public class ProductDao {
         }
         return Optional.empty();
     }
+
+    /**
+     * 获取随机上架商品，最多返回指定数量
+     * 
+     * @param limit 最大返回数量
+     * @return Optional<List<Product>> 包含随机上架商品的可选列表，未找到时返回空Optional
+     * @throws SQLException SQL执行异常时会打印堆栈跟踪
+     */
+    public Optional<List<Product>> getRandomListedProducts(int limit) {
+        String sql = "select * from product where product_listing = true order by rand() limit ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, limit);
+            ResultSet rs = ps.executeQuery();
+            List<Product> products = new ArrayList<>();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProduct_id(rs.getInt("product_id"));
+                product.setProduct_name(rs.getString("product_name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getDouble("price"));
+                product.setStock(rs.getInt("stock"));
+                product.setCategory_id(rs.getInt("category_id"));
+                product.setShop_id(rs.getInt("shop_id"));
+                product.setProduct_listing(rs.getBoolean("product_listing"));
+                products.add(product);
+            }
+            DBUtil.close(rs, ps, conn);
+            return Optional.of(products);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
 }
