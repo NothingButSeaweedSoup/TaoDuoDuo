@@ -101,7 +101,7 @@ public class ProductService {
     /**
      * 根据店铺ID和商品名称搜索商品
      * 
-     * @param shopId 店铺ID
+     * @param shopId      店铺ID
      * @param productName 商品名称关键字
      * @return 匹配的商品列表
      */
@@ -110,7 +110,7 @@ public class ProductService {
         if (allProducts == null || productName == null || productName.trim().isEmpty()) {
             return allProducts;
         }
-        
+
         String keyword = productName.trim().toLowerCase();
         return allProducts.stream()
                 .filter(product -> product.getProduct_name().toLowerCase().contains(keyword))
@@ -127,12 +127,12 @@ public class ProductService {
         if (product == null || product.getProduct_name() == null || product.getProduct_name().trim().isEmpty()) {
             return false;
         }
-        
+
         // 验证价格和库存
         if (product.getPrice() < 0 || product.getStock() < 0) {
             return false;
         }
-        
+
         return productDao.addProduct(product);
     }
 
@@ -146,12 +146,12 @@ public class ProductService {
         if (product == null || product.getProduct_name() == null || product.getProduct_name().trim().isEmpty()) {
             return false;
         }
-        
+
         // 验证价格和库存
         if (product.getPrice() < 0 || product.getStock() < 0) {
             return false;
         }
-        
+
         return productDao.updateProduct(product);
     }
 
@@ -169,10 +169,40 @@ public class ProductService {
      * 更新商品上架状态
      * 
      * @param productId 商品ID
-     * @param listing 上架状态
+     * @param listing   上架状态
      * @return 更新成功返回true
      */
     public boolean updateProductListing(int productId, boolean listing) {
         return productDao.updateProductListing(productId, listing);
+    }
+
+    /**
+     * 添加商品图片
+     * 
+     * @param productImage 商品图片对象
+     * @return 添加成功返回true
+     */
+    public boolean addProductImage(ProductImage productImage) {
+        return productImageDao.addProductImage(productImage);
+    }
+
+    /**
+     * 删除商品图片
+     * 
+     * @param imageId 图片ID
+     * @return 删除成功返回true
+     */
+    public boolean deleteProductImage(int imageId) {
+        return productImageDao.deleteProductImage(imageId);
+    }
+
+    /**
+     * 获取商品主图
+     * 
+     * @param productId 商品ID
+     * @return 主图对象
+     */
+    public ProductImage getProductMainImage(int productId) {
+        return productImageDao.getProductMainImage(productId).orElse(null);
     }
 }

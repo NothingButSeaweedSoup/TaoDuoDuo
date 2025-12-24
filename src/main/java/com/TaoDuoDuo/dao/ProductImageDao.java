@@ -14,6 +14,7 @@ import java.util.Optional;
 public class ProductImageDao {
     /**
      * 添加商品图片记录到数据库
+     * 
      * @param productImage 商品图片对象，包含商品ID、图片URL和排序序号
      *                     添加成功后会自动设置生成的图片ID
      * @return 添加成功返回true，失败返回false
@@ -37,7 +38,7 @@ public class ProductImageDao {
             }
             DBUtil.close(null, ps, conn);
             return result;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -45,6 +46,7 @@ public class ProductImageDao {
 
     /**
      * 更新商品图片记录信息
+     * 
      * @param productImage 商品图片对象，必须包含图片ID以及要更新的商品ID、图片URL和排序序号
      * @return 更新成功返回true，失败返回false
      */
@@ -60,7 +62,7 @@ public class ProductImageDao {
             boolean result = ps.executeUpdate() > 0;
             DBUtil.close(null, ps, conn);
             return result;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -68,6 +70,7 @@ public class ProductImageDao {
 
     /**
      * 根据图片ID删除商品图片记录
+     * 
      * @param image_id 要删除的图片ID
      * @return 删除成功返回true，失败返回false
      */
@@ -80,7 +83,7 @@ public class ProductImageDao {
             boolean result = ps.executeUpdate() > 0;
             DBUtil.close(null, ps, conn);
             return result;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -88,6 +91,7 @@ public class ProductImageDao {
 
     /**
      * 根据图片ID查询单个商品图片信息
+     * 
      * @param image_id 图片ID
      * @return 包含商品图片信息的Optional对象，如果未找到则返回空Optional
      */
@@ -106,11 +110,11 @@ public class ProductImageDao {
                 productImage.setSort_order(rs.getInt("sort_order"));
                 DBUtil.close(rs, ps, conn);
                 return Optional.of(productImage);
-            }else {
+            } else {
                 DBUtil.close(null, ps, conn);
                 return Optional.empty();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -118,6 +122,7 @@ public class ProductImageDao {
 
     /**
      * 根据商品ID查询该商品的所有图片信息
+     * 
      * @param product_id 商品ID
      * @return 包含商品图片列表的Optional对象，如果未找到则返回空Optional
      */
@@ -139,7 +144,7 @@ public class ProductImageDao {
             }
             DBUtil.close(rs, ps, conn);
             return Optional.of(productImageList);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -147,6 +152,7 @@ public class ProductImageDao {
 
     /**
      * 获取指定商品的主图（排序序号为1的图片）
+     * 
      * @param product_id 商品ID
      * @return 包含主图信息的Optional对象，如果未找到则返回空Optional
      */
@@ -165,11 +171,39 @@ public class ProductImageDao {
                 productImage.setSort_order(rs.getInt("sort_order"));
                 DBUtil.close(rs, ps, conn);
                 return Optional.of(productImage);
-            }else {
+            } else {
                 DBUtil.close(null, ps, conn);
                 return Optional.empty();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 获取所有商品图片记录
+     * 
+     * @return 包含所有图片信息的Optional对象
+     */
+    public Optional<List<ProductImage>> getAllProductImages() {
+        String sql = "select * from product_image order by product_id, sort_order";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<ProductImage> productImageList = new ArrayList<>();
+            while (rs.next()) {
+                ProductImage productImage = new ProductImage();
+                productImage.setImage_id(rs.getInt("image_id"));
+                productImage.setProduct_id(rs.getInt("product_id"));
+                productImage.setImage_url(rs.getString("image_url"));
+                productImage.setSort_order(rs.getInt("sort_order"));
+                productImageList.add(productImage);
+            }
+            DBUtil.close(rs, ps, conn);
+            return Optional.of(productImageList);
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
