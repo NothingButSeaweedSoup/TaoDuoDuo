@@ -177,9 +177,12 @@
                         <div class="navbar-user-menu">
                             <% if (navUserRole !=null && navUserRole==1) { %>
                                 <a href="${pageContext.request.contextPath}/CartServlet">购物车</a>
-                                <% } %>
-                                    <a href="#">订单</a>
-                                    <a href="${pageContext.request.contextPath}/ProfileServlet">个人中心</a>
+                            <% } %>
+                            <% if (navUserRole !=null && navUserRole==2) { %>
+                                <a href="${pageContext.request.contextPath}/ShopManagementServlet">商铺管理</a>
+                            <% } %>
+                            <a href="#">订单</a>
+                            <a href="${pageContext.request.contextPath}/ProfileServlet">个人中心</a>
                         </div>
                         <a href="${pageContext.request.contextPath}/LogoutServlet" class="navbar-btn logout">退出</a>
                     </div>

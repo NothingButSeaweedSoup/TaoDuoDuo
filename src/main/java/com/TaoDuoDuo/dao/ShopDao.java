@@ -36,7 +36,34 @@ public class ShopDao {
             }
             DBUtil.close(null, ps, conn);
             return result;
-        }catch (SQLException e){
+        } catch (SQLException e) {
+            // 检查是否是触发器导致的用户角色重复插入错误
+            if (e.getMessage() != null && 
+                e.getMessage().contains("Duplicate entry") && 
+                e.getMessage().contains("user_role")) {
+                
+                // 这是触发器尝试重复插入用户角色导致的错误
+                // 但店铺可能已经成功创建，我们需要检查
+                try {
+                    // 查询刚刚插入的店铺是否存在
+                    String checkSql = "SELECT shop_id FROM shop WHERE shop_name = ? AND owner_id = ? ORDER BY shop_id DESC LIMIT 1";
+                    PreparedStatement checkPs = conn.prepareStatement(checkSql);
+                    checkPs.setString(1, shop.getShop_name());
+                    checkPs.setInt(2, shop.getOwner_id());
+                    ResultSet rs = checkPs.executeQuery();
+                    
+                    if (rs.next()) {
+                        // 店铺已经成功创建，设置ID并返回成功
+                        int shopId = rs.getInt("shop_id");
+                        shop.setShop_id(shopId);
+                        DBUtil.close(rs, checkPs, conn);
+                        return true;
+                    }
+                    DBUtil.close(rs, checkPs, conn);
+                } catch (SQLException checkException) {
+                    checkException.printStackTrace();
+                }
+            }
             e.printStackTrace();
         }
         return false;
