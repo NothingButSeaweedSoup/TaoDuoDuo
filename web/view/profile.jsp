@@ -375,13 +375,6 @@
                                             个人信息
                                         </a>
                                     </li>
-                                    <li class="menu-item">
-                                        <a href="#" class="menu-link" onclick="showContent('orders')">
-                                            <img src="${pageContext.request.contextPath}/icon/BillInquiry.png" alt="账单"
-                                                class="menu-icon">
-                                            账单
-                                        </a>
-                                    </li>
                                     <% if (userRole !=null && userRole==1) { %>
                                         <li class="menu-item">
                                             <a href="${pageContext.request.contextPath}/CartServlet" class="menu-link">
@@ -422,7 +415,10 @@
                                         <% if (profileSuccess !=null) { %>
                                             <div
                                                 style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
-                                                ✓ <%= profileSuccess %>
+                                                <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                                     alt="成功"
+                                                     style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                                <%= profileSuccess %>
                                             </div>
                                             <% } %>
 
@@ -506,24 +502,12 @@
                                                             </div>
 
                                                             <div class="form-actions">
-                                                                <button type="submit" class="btn btn-primary">✓
+                                                                <button type="submit" class="btn btn-primary">
                                                                     提交修改</button>
                                                                 <button type="reset"
                                                                     class="btn btn-secondary">重置</button>
                                                             </div>
                                                         </form>
-                                </div>
-
-                                <!-- 账单页面 -->
-                                <div id="orders" class="content-section" style="display: none;">
-                                    <h2 class="content-title">我的账单</h2>
-                                    <div style="text-align: center; padding: 60px 0; color: #8c8c8c;">
-                                        <div style="font-size: 48px; margin-bottom: 20px;">
-                                            <img src="${pageContext.request.contextPath}/icon/BillInquiry.png" alt="账单"
-                                                style="width: 48px; height: 48px;">
-                                        </div>
-                                        <div>账单功能开发中...</div>
-                                    </div>
                                 </div>
 
                                 <!-- 角色切换页面 -->
@@ -541,8 +525,11 @@
                                                 <div
                                                     style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
                                                     <% if ("role_switched".equals(success)) { %>
-                                                        ✓ 角色切换成功！
-                                                        <% } %>
+                                                    <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                                         alt="成功"
+                                                         style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                                    角色切换成功！
+                                                    <% } %>
                                                 </div>
                                                 <% } %>
 

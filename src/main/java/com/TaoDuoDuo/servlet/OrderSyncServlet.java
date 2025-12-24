@@ -120,16 +120,16 @@ public class OrderSyncServlet extends HttpServlet {
 
                     boolean updated = orderDao.updateOrder(order);
                     if (updated) {
-                        out.println("<p style='color: green;'>✅ 订单状态已更新: " + order.getOrder_status() + " → " + newStatus
+                        out.println("<p style='color: green;'><img src='" + request.getContextPath() + "/icon/Success.png' alt='成功' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态已更新: " + order.getOrder_status() + " → " + newStatus
                                 + "</p>");
                     } else {
-                        out.println("<p style='color: red;'>❌ 订单状态更新失败</p>");
+                        out.println("<p style='color: red;'><img src='" + request.getContextPath() + "/icon/Error.png' alt='错误' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态更新失败</p>");
                     }
                 } else {
-                    out.println("<p style='color: blue;'>ℹ️ 订单状态无需更新</p>");
+                    out.println("<p style='color: blue;'><img src='" + request.getContextPath() + "/icon/Success.png' alt='信息' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态无需更新</p>");
                 }
             } else {
-                out.println("<p style='color: red;'>❌ 查询支付宝订单失败</p>");
+                out.println("<p style='color: red;'><img src='" + request.getContextPath() + "/icon/Error.png' alt='错误' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 查询支付宝订单失败</p>");
             }
 
         } catch (Exception e) {

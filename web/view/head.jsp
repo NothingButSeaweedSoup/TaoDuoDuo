@@ -157,7 +157,6 @@
                 </a>
                 <div class="navbar-menu">
                     <a href="${pageContext.request.contextPath}/index.jsp">首页</a>
-                    <a href="#">分类</a>
                 </div>
             </div>
 

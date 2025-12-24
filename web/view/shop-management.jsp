@@ -234,10 +234,16 @@
                                     <% if (success !=null) { %>
                                         <div class="message success">
                                             <% if ("shop_updated".equals(success)) { %>
-                                                ✓ 店铺信息更新成功！新店铺名称：<%= shopName !=null ? shopName : "" %>
-                                                    <% } else { %>
-                                                        ✓ 操作成功！
-                                                        <% } %>
+                                            <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                                 alt="成功"
+                                                 style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                            店铺信息更新成功！新店铺名称：<%= shopName !=null ? shopName : "" %>
+                                            <% } else { %>
+                                            <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                                 alt="成功"
+                                                 style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                            操作成功！
+                                            <% } %>
                                         </div>
                                         <% } %>
 
@@ -316,7 +322,11 @@
                                                                 <% } else { %>
                                                                     <!-- 空状态 -->
                                                                     <div class="empty-state">
-                                                                        <div class="icon">🏪</div>
+                                                                        <div class="icon">
+                                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                                 alt="暂无店铺"
+                                                                                 style="width: 64px; height: 64px;">
+                                                                        </div>
                                                                         <h3>暂无店铺</h3>
                                                                         <p>您还没有创建任何店铺，请先申请商家入驻</p>
                                                                         <a href="${pageContext.request.contextPath}/ProfileServlet"

@@ -97,7 +97,11 @@
         <%@ include file="head.jsp" %>
 
             <div class="error-container">
-                <div class="error-icon">⚠️</div>
+                <div class="error-icon">
+                    <img src="${pageContext.request.contextPath}/icon/Success.png"
+                         alt="成功"
+                         style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                </div>
                 <div class="error-title">操作失败</div>
                 <div class="error-message">
                     <% String errorMsg=request.getParameter("error"); if (errorMsg !=null && !errorMsg.isEmpty()) {

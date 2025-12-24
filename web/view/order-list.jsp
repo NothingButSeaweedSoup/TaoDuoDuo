@@ -300,7 +300,11 @@
             <c:choose>
                 <c:when test="${empty orders}">
                     <div class="empty-state">
-                        <div class="empty-icon">📦</div>
+                        <div class="empty-icon">
+                            <img src="${pageContext.request.contextPath}/icon/NoRecord.png"
+                                 alt="无记录"
+                                 style="width: 64px; height: 64px;">
+                        </div>
                         <h3>暂无订单</h3>
                         <p>您还没有任何订单，快去购物吧！</p>
                         <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-primary" style="margin-top: 20px;">

@@ -493,7 +493,10 @@
                                             <div class="page-header">
                                                 <div class="header-content">
                                                     <div class="shop-info">
-                                                        <h1>🏪 <%= shop.getShop_name() %>
+                                                        <h1>
+                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png" alt="店铺"
+                                                                 style="width: 32px; height: 32px; vertical-align: middle; margin-right: 10px;">
+                                                            <%= shop.getShop_name() %>
                                                         </h1>
                                                         <div class="shop-meta">
                                                             <div>店铺ID: <%= shop.getShop_id() %>
@@ -548,7 +551,9 @@
                                             <!-- 消息显示 -->
                                             <% if (success !=null) { %>
                                                 <div class="message success">
-                                                    ✓
+                                                    <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                                         alt="成功"
+                                                         style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                     <% if ("product_added".equals(success)) { %>
                                                         商品添加成功！商品名称：<%= productName !=null ? productName : "" %>
                                                             <% String newProductId=(String)
@@ -558,7 +563,10 @@
                                                                 <button type="button" class="btn btn-primary btn-small"
                                                                     style="margin-top: 10px;"
                                                                     onclick="showImageManager(<%= newProductId %>)">
-                                                                    📷 立即上传商品图片
+                                                                    <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
+                                                                         alt="选择"
+                                                                         style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                                                    立即上传商品图片
                                                                 </button>
                                                                 <% } %>
                                                                     <% } else if ("shop_updated".equals(success)) { %>
@@ -627,7 +635,7 @@
                                                                 <!-- 左侧：添加商品 -->
                                                                 <div class="content-card">
                                                                     <h2 class="card-title">
-                                                                        <img src="${pageContext.request.contextPath}/icon/AddProduct.png"
+                                                                        <img src="${pageContext.request.contextPath}/icon/AddProduct-blue.png"
                                                                             alt="添加商品"
                                                                             style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
                                                                         添加新商品
@@ -688,7 +696,7 @@
 
                                                                         <button type="submit" class="btn btn-primary"
                                                                             style="width: 100%;">
-                                                                            <img src="${pageContext.request.contextPath}/icon/AddProduct.png"
+                                                                            <img src="${pageContext.request.contextPath}/icon/AddProduct-white.png"
                                                                                 alt="添加"
                                                                                 style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
                                                                             添加商品
@@ -698,7 +706,12 @@
 
                                                                 <!-- 右侧：商品列表 -->
                                                                 <div class="content-card">
-                                                                    <h2 class="card-title">📋 商品管理</h2>
+                                                                    <h2 class="card-title">
+                                                                        <img src="${pageContext.request.contextPath}/icon/ProductList.png"
+                                                                             alt="商品列表"
+                                                                             style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
+                                                                        商品管理
+                                                                    </h2>
 
                                                                     <!-- 搜索栏 -->
                                                                     <div class="search-bar">
@@ -712,7 +725,7 @@
                                                                                 placeholder="搜索商品名称..."
                                                                                 value="<%= searchKeyword != null ? searchKeyword : "" %>">
                                                                             <button type="submit"
-                                                                                class="btn btn-primary">🔍 搜索</button>
+                                                                                class="btn btn-primary">搜索</button>
                                                                             <% if (searchKeyword !=null &&
                                                                                 !searchKeyword.isEmpty()) { %>
                                                                                 <a href="${pageContext.request.contextPath}/ShopDetailServlet?shopId=<%= shop.getShop_id() %>"
@@ -891,7 +904,12 @@
 
                                                                                         <!-- 上传区域 -->
                                                                                         <div class="image-upload-area">
-                                                                                            <p>📷 选择图片文件上传</p>
+                                                                                            <p>
+                                                                                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
+                                                                                                     alt="上传图片"
+                                                                                                     style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                                                                                选择图片文件上传
+                                                                                            </p>
                                                                                             <input type="file"
                                                                                                 id="imageInput-<%= product.getProduct_id() %>"
                                                                                                 class="file-input"
@@ -901,18 +919,12 @@
                                                                                             <button type="button"
                                                                                                 class="upload-btn"
                                                                                                 onclick="document.getElementById('imageInput-<%= product.getProduct_id() %>').click()">
-                                                                                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
-                                                                                                    alt="选择"
-                                                                                                    style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                                                                 选择图片
                                                                                             </button>
                                                                                             <button type="button"
                                                                                                 class="btn btn-success"
                                                                                                 onclick="uploadImages(<%= product.getProduct_id() %>)"
                                                                                                 style="margin-left: 10px;">
-                                                                                                <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
-                                                                                                    alt="上传"
-                                                                                                    style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                                                                 上传图片
                                                                                             </button>
                                                                                         </div>
@@ -943,7 +955,11 @@
                                                                         <% } else { %>
                                                                             <!-- 空状态 -->
                                                                             <div class="empty-state">
-                                                                                <div class="icon">📦</div>
+                                                                                <div class="icon">
+                                                                                    <img src="${pageContext.request.contextPath}/icon/ProductManaging.png"
+                                                                                         alt="商品管理"
+                                                                                         style="width: 64px; height: 64px;">
+                                                                                </div>
                                                                                 <h3>暂无商品</h3>
                                                                                 <p>
                                                                                     <% if (searchKeyword !=null &&

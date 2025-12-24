@@ -193,7 +193,11 @@
             <c:choose>
                 <c:when test="${empty reviews}">
                     <div class="empty-state">
-                        <div class="empty-icon">📝</div>
+                        <div class="empty-icon">
+                            <img src="${pageContext.request.contextPath}/icon/NoRecord.png"
+                                 alt="无记录"
+                                 style="width: 64px; height: 64px;">
+                        </div>
                         <div class="empty-title">暂无评价记录</div>
                         <div class="empty-subtitle">完成订单后可以进行评价</div>
                     </div>

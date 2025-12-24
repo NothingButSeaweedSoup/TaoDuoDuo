@@ -423,7 +423,10 @@
                                         <!-- 店内搜索 -->
                                         <div class="shop-search-section">
                                             <div class="shop-search-title">
-                                                🔍 店内搜索
+                                                <img src="${pageContext.request.contextPath}/icon/Search_Blue.png"
+                                                     alt="店内搜索"
+                                                     style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                                店内搜索
                                             </div>
                                             <div class="shop-search-container">
                                                 <input type="text" class="shop-search-input"
