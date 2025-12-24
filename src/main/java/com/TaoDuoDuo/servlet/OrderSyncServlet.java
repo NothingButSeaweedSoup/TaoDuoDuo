@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -65,7 +64,7 @@ public class OrderSyncServlet extends HttpServlet {
         out.println("<p><small>如果不填订单ID，将同步所有未支付订单</small></p>");
 
         // 显示未支付订单列表
-        showUnpaidOrders(out);
+        showUnpaidOrders(request, out);
 
         out.println("<hr>");
         out.println("<p><a href='" + request.getContextPath() + "/OrderQueryServlet'>返回订单列表</a></p>");
@@ -159,7 +158,7 @@ public class OrderSyncServlet extends HttpServlet {
     /**
      * 显示未支付订单列表
      */
-    private void showUnpaidOrders(PrintWriter out) {
+    private void showUnpaidOrders(HttpServletRequest request, PrintWriter out) {
         try {
             out.println("<h3>当前用户的未支付订单</h3>");
 
