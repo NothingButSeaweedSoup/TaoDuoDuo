@@ -65,4 +65,22 @@ public class CartService {
 
         return cartItems;
     }
+
+    /**
+     * 从购物车中移除指定的商品
+     * @param cartId 购物车项ID
+     * @return 移除成功返回true，失败返回false
+     */
+    public boolean removeFromCart(int cartId) {
+        return cartDao.deleteCart(cartId);
+    }
+
+    /**
+     * 清空指定用户的购物车
+     * @param userId 用户ID
+     * @return 清空成功返回true，失败返回false
+     */
+    public boolean clearUserCart(int userId) {
+        return cartDao.deleteCartByUserId(userId);
+    }
 }

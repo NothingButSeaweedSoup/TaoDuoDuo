@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class OrderDao {
     /**
-     * 添加订单记录到数据库
+     * 添加订单记录到数据库（临时版本，不使用alipay_order_no字段）
      * @param order 订单对象，包含用户ID、店铺ID、订单状态和总金额
      *              添加成功后会自动设置生成的订单ID
      * @return 添加成功返回true，失败返回false
@@ -21,9 +21,9 @@ public class OrderDao {
     public boolean addOrder(Order order) {
         String sql;
         if(order.getOrder_status() == null){
-            sql = "insert into order(user_id,shop_id,total_amount) values(?,?,?)";
-        }        else{
-            sql = "insert into order(user_id,shop_id,order_status,total_amount) values(?,?,?,?)";
+            sql = "insert into `order`(user_id,shop_id,total_amount) values(?,?,?)";
+        } else{
+            sql = "insert into `order`(user_id,shop_id,order_status,total_amount) values(?,?,?,?)";
         }
         Connection conn = DBUtil.getConnection();
         try {
@@ -55,11 +55,11 @@ public class OrderDao {
 
     /**
      * 更新订单记录信息
-     * @param order 订单对象，必须包含订单ID以及要更新的用户ID、店铺ID、订单状态和总金额
+     * @param order 订单对象，必须包含订单ID以及要更新的用户ID、店铺ID、订单状态、总金额和支付宝订单号
      * @return 更新成功返回true，失败返回false
      */
     public boolean updateOrder(Order order) {
-        String sql = "update order set user_id=?,shop_id=?,order_status=?,total_amount=? where order_id=?";
+        String sql = "update `order` set user_id=?,shop_id=?,order_status=?,total_amount=?,alipay_order_no=?,update_time=NOW() where order_id=?";
         Connection conn = DBUtil.getConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -67,7 +67,8 @@ public class OrderDao {
             ps.setInt(2, order.getShop_id());
             ps.setString(3, order.getOrder_status());
             ps.setDouble(4, order.getTotal_amount());
-            ps.setInt(5, order.getOrder_id());
+            ps.setString(5, order.getAlipay_order_no());
+            ps.setInt(6, order.getOrder_id());
             boolean result = ps.executeUpdate() > 0;
             DBUtil.close(null, ps, conn);
             return result;
@@ -103,7 +104,7 @@ public class OrderDao {
      * @return 包含订单信息的Optional对象，如果未找到则返回空Optional
      */
     public Optional<Order> getOrderById(int order_id) {
-        String sql = "select * from order where order_id=?";
+        String sql = "select * from `order` where order_id=?";
         Connection conn = DBUtil.getConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -116,8 +117,9 @@ public class OrderDao {
                         rs.getInt("shop_id"),
                         rs.getString("order_status"),
                         rs.getDouble("total_amount"),
-                        rs.getTimestamp("create_time").toLocalDateTime(),
-                        rs.getTimestamp("update_time").toLocalDateTime()
+                        rs.getTimestamp("create_time") != null ? rs.getTimestamp("create_time").toLocalDateTime() : null,
+                        rs.getTimestamp("update_time") != null ? rs.getTimestamp("update_time").toLocalDateTime() : null,
+                        rs.getString("alipay_order_no")
                 );
                 DBUtil.close(rs, ps, conn);
                 return Optional.of(order);
@@ -137,7 +139,7 @@ public class OrderDao {
      * @return 包含订单列表的Optional对象，如果未找到则返回空Optional
      */
     public Optional<List<Order>> getOrderByUserId(int user_id) {
-        String sql = "select * from order where user_id=?";
+        String sql = "select * from `order` where user_id=? order by create_time desc";
         Connection conn = DBUtil.getConnection();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -151,8 +153,9 @@ public class OrderDao {
                         rs.getInt("shop_id"),
                         rs.getString("order_status"),
                         rs.getDouble("total_amount"),
-                        rs.getTimestamp("create_time").toLocalDateTime(),
-                        rs.getTimestamp("update_time").toLocalDateTime()
+                        rs.getTimestamp("create_time") != null ? rs.getTimestamp("create_time").toLocalDateTime() : null,
+                        rs.getTimestamp("update_time") != null ? rs.getTimestamp("update_time").toLocalDateTime() : null,
+                        rs.getString("alipay_order_no")
                 );
                 orders.add(order);
             }
@@ -262,6 +265,41 @@ public class OrderDao {
             DBUtil.close(rs, ps, conn);
             return Optional.of(orders);
         }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 根据支付宝订单号查询订单
+     * @param alipayOrderNo 支付宝订单号
+     * @return 包含订单信息的Optional对象，如果未找到则返回空Optional
+     */
+    public Optional<Order> getOrderByAlipayOrderNo(String alipayOrderNo) {
+        String sql = "select * from `order` where alipay_order_no=?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, alipayOrderNo);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Order order = new Order(
+                        rs.getInt("order_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("shop_id"),
+                        rs.getString("order_status"),
+                        rs.getDouble("total_amount"),
+                        rs.getTimestamp("create_time") != null ? rs.getTimestamp("create_time").toLocalDateTime() : null,
+                        rs.getTimestamp("update_time") != null ? rs.getTimestamp("update_time").toLocalDateTime() : null,
+                        rs.getString("alipay_order_no")
+                );
+                DBUtil.close(rs, ps, conn);
+                return Optional.of(order);
+            } else {
+                DBUtil.close(rs, ps, conn);
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();

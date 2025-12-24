@@ -101,6 +101,32 @@ public class OrderDetailDao {
         return Optional.empty();
     }
 
+    public Optional<List<OrderDetail>> getOrderDetailsByOrderId(int order_id) {
+        String sql = "select * from order_detail where order_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, order_id);
+            ResultSet rs = ps.executeQuery();
+            List<OrderDetail> orderDetails = new ArrayList<>();
+            while (rs.next()) {
+                OrderDetail orderDetail = new OrderDetail(
+                        rs.getInt("order_detail_id"),
+                        rs.getInt("order_id"),
+                        rs.getInt("product_id"),
+                        rs.getInt("quantity"),
+                        rs.getDouble("price"),
+                        rs.getString("payment_order_no"));
+                orderDetails.add(orderDetail);
+            }
+            DBUtil.close(rs, ps, conn);
+            return Optional.of(orderDetails);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
     public Optional<OrderDetail> getOrderDetailByOrderId(int order_id) {
         String sql = "select * from order_detail where order_id = ?";
         Connection conn = DBUtil.getConnection();

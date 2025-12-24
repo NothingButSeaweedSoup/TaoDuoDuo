@@ -181,7 +181,10 @@
                                     <% if (navUserRole !=null && navUserRole==2) { %>
                                         <a href="${pageContext.request.contextPath}/ShopManagementServlet">商铺管理</a>
                                         <% } %>
-                                            <a href="#">订单</a>
+                                            <a href="${pageContext.request.contextPath}/OrderQueryServlet">订单</a>
+                                            <% if (navUserRole !=null && navUserRole==1) { %>
+                                                <a href="${pageContext.request.contextPath}/ReviewQueryServlet?action=byUser">我的评价</a>
+                                                <% } %>
                                             <a href="${pageContext.request.contextPath}/ProfileServlet">个人中心</a>
                         </div>
                         <a href="${pageContext.request.contextPath}/LogoutServlet" class="navbar-btn logout">退出</a>

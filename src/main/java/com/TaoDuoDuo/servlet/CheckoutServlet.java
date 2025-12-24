@@ -1,7 +1,9 @@
 package com.TaoDuoDuo.servlet;
 
 import com.TaoDuoDuo.entity.CartItem;
+import com.TaoDuoDuo.entity.Order;
 import com.TaoDuoDuo.service.CartService;
+import com.TaoDuoDuo.service.OrderManagementService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,17 +12,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "CheckoutServlet", value = "/CheckoutServlet")
 public class CheckoutServlet extends HttpServlet {
     private CartService cartService;
+    private OrderManagementService orderService;
 
     @Override
     public void init() throws ServletException {
         cartService = new CartService();
+        orderService = new OrderManagementService();
     }
 
     @Override
@@ -53,11 +58,10 @@ public class CheckoutServlet extends HttpServlet {
         }
 
         List<CartItem> allCartItems = cartService.getUserCartItems(userId);
-        List<CartItem> selectedItems = new ArrayList<>();
+        Map<Integer, List<CartItem>> itemsByShop = new HashMap<>();
         List<String> unavailableProducts = new ArrayList<>();
-        double totalAmount = 0.0;
-        StringBuilder productNames = new StringBuilder();
 
+        // 按店铺分组商品
         for (String cartIdStr : selectedCartIds) {
             try {
                 int cartId = Integer.parseInt(cartIdStr);
@@ -75,12 +79,9 @@ public class CheckoutServlet extends HttpServlet {
                             continue;
                         }
 
-                        selectedItems.add(item);
-                        totalAmount += item.getSubtotal();
-                        if (productNames.length() > 0) {
-                            productNames.append("、");
-                        }
-                        productNames.append(item.getProduct().getProduct_name());
+                        // 按店铺分组
+                        int shopId = item.getProduct().getShop_id();
+                        itemsByShop.computeIfAbsent(shopId, k -> new ArrayList<>()).add(item);
                         break;
                     }
                 }
@@ -97,41 +98,54 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        if (selectedItems.isEmpty()) {
+        if (itemsByShop.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/CartServlet?error=noSelection");
             return;
         }
 
-        // TODO: 为每个商品创建单独的订单
-        // 这里暂时只处理支付宝支付的总订单
-
-        session.setAttribute("checkoutItems", selectedItems);
-        session.setAttribute("checkoutTotal", totalAmount);
-        session.setAttribute("selectedCartIds", selectedCartIds);
-
-        // 生成订单号
-        String outTradeNo = "ORDER_" + System.currentTimeMillis() + "_" + userId;
-
-        // 商品名称（最多显示前3个商品）
-        String subject = productNames.toString();
-        if (subject.length() > 50) {
-            subject = subject.substring(0, 47) + "...";
+        try {
+            // 为每个店铺创建单独的订单
+            List<Order> createdOrders = new ArrayList<>();
+            
+            for (Map.Entry<Integer, List<CartItem>> entry : itemsByShop.entrySet()) {
+                int shopId = entry.getKey();
+                List<CartItem> shopItems = entry.getValue();
+                
+                // 为每个店铺创建订单
+                Order order = orderService.createOrderFromCart(userId, shopId, shopItems);
+                if (order == null) {
+                    throw new RuntimeException("创建店铺 " + shopId + " 的订单失败");
+                }
+                createdOrders.add(order);
+            }
+            
+            // 清空购物车中已结算的商品
+            for (String cartIdStr : selectedCartIds) {
+                try {
+                    int cartId = Integer.parseInt(cartIdStr);
+                    cartService.removeFromCart(cartId);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            // 存储订单信息到session
+            if (createdOrders.size() == 1) {
+                // 如果只有一个订单，保持原有逻辑
+                session.setAttribute("createdOrder", createdOrders.get(0));
+            } else {
+                // 如果有多个订单，存储订单列表
+                session.setAttribute("createdOrders", createdOrders);
+            }
+            
+            // 跳转到订单确认页面
+            response.sendRedirect(request.getContextPath() + "/view/order-create-confirmation.jsp");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMsg = "创建订单失败：" + e.getMessage();
+            response.sendRedirect(request.getContextPath() + "/CartServlet?error=" +
+                    java.net.URLEncoder.encode(errorMsg, "UTF-8"));
         }
-
-        // 创建支付表单并直接输出
-        PrintWriter out = response.getWriter();
-        out.println("<!DOCTYPE html>");
-        out.println("<html>");
-        out.println("<head><meta charset='UTF-8'><title>正在跳转到支付页面...</title></head>");
-        out.println("<body>");
-        out.println("<h3 style='text-align:center; margin-top:100px;'>正在跳转到支付宝支付页面...</h3>");
-        out.println("<form id='payForm' method='post' action='" + request.getContextPath() + "/pay'>");
-        out.println("<input type='hidden' name='outTradeNo' value='" + outTradeNo + "'>");
-        out.println("<input type='hidden' name='totalAmount' value='" + String.format("%.2f", totalAmount) + "'>");
-        out.println("<input type='hidden' name='subject' value='" + subject + "'>");
-        out.println("</form>");
-        out.println("<script>document.getElementById('payForm').submit();</script>");
-        out.println("</body>");
-        out.println("</html>");
     }
 }
