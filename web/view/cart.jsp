@@ -288,7 +288,7 @@
                                                 <% for (CartItem item : cartItems) { String
                                                     imgSrc=request.getContextPath(); if (item.getProductImage() !=null)
                                                     { imgSrc +=item.getProductImage(); } else { imgSrc
-                                                    +="/images/default.png" ; } %>
+                                                    +="/icon/Akari.jpg" ; } %>
                                                     <div
                                                         class="cart-item <% if (!item.getProduct().isProduct_listing()) { %>unlisted-item<% } %>">
                                                         <input type="checkbox" class="cart-item-checkbox"

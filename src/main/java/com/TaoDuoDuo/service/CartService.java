@@ -50,7 +50,7 @@ public class CartService {
                 if (productOptional.isPresent()) {
                     Product product = productOptional.get();
 
-                    String productImage = null;
+                    String productImage = "/icon/Akari.jpg"; // 默认图片
                     Optional<List<ProductImage>> imagesOptional = productImageDao
                             .getProductImageByProductId(cart.getProduct_id());
                     if (imagesOptional.isPresent() && !imagesOptional.get().isEmpty()) {

@@ -542,7 +542,9 @@
                       <% if (productImages !=null && !productImages.isEmpty()) { %>
                         <img src="<%= request.getContextPath() + productImages.get(0).getImage_url() %>" alt="商品主图"
                           id="mainImage">
-                        <% } %>
+                        <% } else { %>
+                          <img src="<%= request.getContextPath() %>/icon/Akari.jpg" alt="默认商品图片" id="mainImage">
+                          <% } %>
                     </div>
 
                     <!-- 图片列表 -->
@@ -559,7 +561,12 @@
                                       alt="商品图片<%= i + 1 %>">
                               </div>
                               <% } %>
-                                <% } %>
+                                <% } else { %>
+                                  <div class="img_item active"
+                                    data-image-url="<%= request.getContextPath() %>/icon/Akari.jpg" data-index="1">
+                                    <img src="<%= request.getContextPath() %>/icon/Akari.jpg" alt="默认商品图片">
+                                  </div>
+                                  <% } %>
                         </div>
                         <button class="img_scroll_button next" id="nextBtn" style="display: none;">›</button>
                       </div>

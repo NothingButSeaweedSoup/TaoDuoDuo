@@ -459,7 +459,7 @@
                                                                 <img src="${pageContext.request.contextPath}/${productMap.imageUrl}"
                                                                     alt="${productMap.product.product_name}"
                                                                     class="product-image"
-                                                                    onerror="this.src='${pageContext.request.contextPath}/images/productImage/default.png'">
+                                                                    onerror="this.src='${pageContext.request.contextPath}/icon/Akari.jpg'">
                                                                 <div class="product-info">
                                                                     <div class="product-name">
                                                                         ${productMap.product.product_name}</div>

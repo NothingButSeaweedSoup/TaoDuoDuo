@@ -41,7 +41,7 @@ public class HomeServlet extends HttpServlet {
                 // 获取商品的第一张图片
                 Optional<List<ProductImage>> imagesOpt = productImageDao
                         .getProductImageByProductId(product.getProduct_id());
-                String imageUrl = "images/productImage/default.png"; // 默认图片
+                String imageUrl = "icon/Akari.jpg"; // 默认图片
 
                 if (imagesOpt.isPresent() && !imagesOpt.get().isEmpty()) {
                     ProductImage firstImage = imagesOpt.get().get(0);

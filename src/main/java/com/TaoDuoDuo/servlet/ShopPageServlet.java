@@ -83,7 +83,7 @@ public class ShopPageServlet extends HttpServlet {
                     // 获取商品的第一张图片
                     Optional<List<ProductImage>> imagesOpt = productImageDao
                             .getProductImageByProductId(product.getProduct_id());
-                    String imageUrl = "images/productImage/default.png";
+                    String imageUrl = "icon/Akari.jpg";
 
                     if (imagesOpt.isPresent() && !imagesOpt.get().isEmpty()) {
                         ProductImage firstImage = imagesOpt.get().get(0);

@@ -205,4 +205,25 @@ public class ProductService {
     public ProductImage getProductMainImage(int productId) {
         return productImageDao.getProductMainImage(productId).orElse(null);
     }
+
+    /**
+     * 检查商品是否有图片
+     * 
+     * @param productId 商品ID
+     * @return true表示有图片，false表示没有图片
+     */
+    public boolean hasProductImages(int productId) {
+        List<ProductImage> images = getProductImagesByProductId(productId);
+        return images != null && !images.isEmpty();
+    }
+
+    /**
+     * 检查商品是否可以上架（必须有图片）
+     * 
+     * @param productId 商品ID
+     * @return true表示可以上架，false表示不能上架
+     */
+    public boolean canListProduct(int productId) {
+        return hasProductImages(productId);
+    }
 }
