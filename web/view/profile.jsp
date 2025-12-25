@@ -578,7 +578,7 @@
 
                                 <!-- 商家入驻页面 -->
                                 <div id="merchant" class="content-section" style="display: none;"
-                                     data-debug="merchant-section-loaded"></div>
+                                     data-debug="merchant-section-loaded">
                                     <h2 class="content-title">商家入驻</h2>
 
                                     <!-- 消息显示 -->
