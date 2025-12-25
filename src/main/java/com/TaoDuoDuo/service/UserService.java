@@ -6,6 +6,10 @@ import com.TaoDuoDuo.util.BCryptUtil;
 
 import java.util.Optional;
 
+/**
+ * 用户服务类
+ * 处理用户相关的业务逻辑，包括登录、注册、密码验证等
+ */
 public class UserService {
     private UserDao userDao;
 

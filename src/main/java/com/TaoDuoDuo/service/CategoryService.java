@@ -15,7 +15,7 @@ import java.util.Optional;
 
 /**
  * 分类服务类
- * 处理分类相关的业务逻辑
+ * 处理分类相关的业务逻辑，包括分类查询、商品获取、统计信息等
  */
 public class CategoryService {
 

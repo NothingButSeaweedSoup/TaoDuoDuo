@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -374,7 +375,7 @@
                 <div class="order-summary">
                     <div class="summary-row total-row">
                         <span class="summary-label">订单总额：</span>
-                        <span class="summary-value">¥${order.total_amount}</span>
+                        <span class="summary-value">¥<fmt:formatNumber value="${order.total_amount}" pattern="#0.00"/></span>
                     </div>
                 </div>
 

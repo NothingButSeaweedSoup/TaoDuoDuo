@@ -15,7 +15,13 @@ import java.util.Optional;
 
 /**
  * 分类商品展示Servlet
- * 处理分类页面的商品展示
+ * 处理分类页面的商品展示，支持分类浏览和AJAX分类查询
+ * 主要功能：
+ * 1. 展示指定分类下的商品列表
+ * 2. 提供分类路径（面包屑导航）
+ * 3. 显示子分类列表
+ * 4. 提供分类统计信息
+ * 5. 支持AJAX获取分类列表
  */
 @WebServlet("/CategoryServlet")
 public class CategoryServlet extends HttpServlet {

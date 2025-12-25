@@ -2,18 +2,23 @@ package com.TaoDuoDuo.entity;
 
 import java.time.LocalDateTime;
 
+/**
+ * 商品实体类
+ * 对应数据库中的product表
+ */
 public class Product {
-    private int product_id;
-    private String product_name;
-    private String description;
-    private double price;
-    private int stock;
-    private int category_id;
-    private int shop_id;
-    private boolean product_listing;
-    private LocalDateTime create_time;
-    private LocalDateTime update_time;
+    private int product_id; // 商品ID，主键
+    private String product_name; // 商品名称
+    private String description; // 商品描述
+    private double price; // 商品价格
+    private int stock; // 库存数量
+    private int category_id; // 分类ID
+    private int shop_id; // 店铺ID
+    private boolean product_listing; // 是否上架
+    private LocalDateTime create_time; // 创建时间
+    private LocalDateTime update_time; // 更新时间
 
+    // 创建商品用构造函数
     public Product(String product_name, String description, double price, int stock, int category_id, int shop_id) {
         this.product_name = product_name;
         this.description = description;
@@ -24,6 +29,7 @@ public class Product {
         this.product_listing = false; // 默认下架
     }
 
+    // 创建商品用构造函数（包含时间）
     public Product(String product_name, String description, double price, int stock, int category_id, int shop_id,
             LocalDateTime create_time, LocalDateTime update_time) {
         this.product_name = product_name;
@@ -37,6 +43,7 @@ public class Product {
         this.update_time = update_time;
     }
 
+    // 完整构造函数
     public Product(int product_id, String product_name, String description, double price, int stock, int category_id,
             int shop_id, boolean product_listing, LocalDateTime create_time, LocalDateTime update_time) {
         this.product_id = product_id;
@@ -51,6 +58,7 @@ public class Product {
         this.update_time = update_time;
     }
 
+    // 默认构造函数
     public Product() {
     }
 

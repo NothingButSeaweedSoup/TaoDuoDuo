@@ -13,6 +13,10 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * 用户登录Servlet
+ * 处理用户登录请求，验证用户身份并建立会话
+ */
 @WebServlet(name = "LoginServlet", value = "/LoginServlet")
 public class LoginServlet extends HttpServlet {
     private UserService userService;

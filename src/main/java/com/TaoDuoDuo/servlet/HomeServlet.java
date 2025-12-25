@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 首页Servlet
+ * 处理首页请求，展示随机商品列表
+ */
 @WebServlet("/HomeServlet")
 public class HomeServlet extends HttpServlet {
     private ProductDao productDao = new ProductDao();

@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 商品数据访问对象
+ * 负责商品相关的数据库操作
+ */
 public class ProductDao {
 
     /**
@@ -666,5 +670,87 @@ public class ProductDao {
         public java.util.Map<Integer, StockUpdateResult> getResults() {
             return results;
         }
+    }
+
+    /**
+     * 获取所有商品（管理员功能）
+     * 
+     * @return 所有商品列表
+     */
+    public Optional<List<Product>> getAllProducts() {
+        String sql = "select * from product order by create_time desc";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<Product> products = new ArrayList<>();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProduct_id(rs.getInt("product_id"));
+                product.setProduct_name(rs.getString("product_name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getDouble("price"));
+                product.setStock(rs.getInt("stock"));
+                product.setCategory_id(rs.getInt("category_id"));
+                product.setShop_id(rs.getInt("shop_id"));
+                product.setProduct_listing(rs.getBoolean("product_listing"));
+                product.setCreate_time(rs.getTimestamp("create_time") != null
+                        ? rs.getTimestamp("create_time").toLocalDateTime()
+                        : null);
+                product.setUpdate_time(rs.getTimestamp("update_time") != null
+                        ? rs.getTimestamp("update_time").toLocalDateTime()
+                        : null);
+                products.add(product);
+            }
+            DBUtil.close(rs, ps, conn);
+            return Optional.of(products);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 管理员强制上架/下架商品
+     * 
+     * @param productId 商品ID
+     * @param listing   上架状态
+     * @return 更新成功返回true
+     */
+    public boolean adminUpdateProductListing(int productId, boolean listing) {
+        String sql = "update product set product_listing = ?, update_time = NOW() where product_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setBoolean(1, listing);
+            ps.setInt(2, productId);
+            boolean result = ps.executeUpdate() > 0;
+            DBUtil.close(null, ps, conn);
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 管理员删除商品
+     * 
+     * @param productId 商品ID
+     * @return 删除成功返回true
+     */
+    public boolean adminDeleteProduct(int productId) {
+        String sql = "delete from product where product_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, productId);
+            boolean result = ps.executeUpdate() > 0;
+            DBUtil.close(null, ps, conn);
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

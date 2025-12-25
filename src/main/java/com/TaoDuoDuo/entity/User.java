@@ -2,18 +2,24 @@ package com.TaoDuoDuo.entity;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户实体类
+ * 对应数据库中的user表
+ */
 public class User {
-    private int user_id;
-    private String username;
-    private String password;
-    private String email;
-    private String phone;
-    private LocalDateTime create_time;
-    private LocalDateTime update_time;
+    private int user_id; // 用户ID，主键
+    private String username; // 用户名
+    private String password; // 密码（加密后）
+    private String email; // 邮箱
+    private String phone; // 手机号
+    private LocalDateTime create_time; // 创建时间
+    private LocalDateTime update_time; // 更新时间
 
+    // 默认构造函数
     public User() {
     }
 
+    // 带用户ID的构造函数
     public User(int user_id, String username, String password, String email, String phone) {
         this.user_id = user_id;
         this.username = username;
@@ -22,8 +28,9 @@ public class User {
         this.phone = phone;
     }
 
-
-    public User(int user_id, String username, String password, String email, String phone, LocalDateTime create_time, LocalDateTime update_time) {
+    // 完整构造函数
+    public User(int user_id, String username, String password, String email, String phone, LocalDateTime create_time,
+            LocalDateTime update_time) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
@@ -33,6 +40,7 @@ public class User {
         this.update_time = update_time;
     }
 
+    // 注册用构造函数（不包含ID）
     public User(String username, String password, String email, String phone) {
         this.username = username;
         this.password = password;
@@ -40,7 +48,9 @@ public class User {
         this.phone = phone;
     }
 
-    public User(String username, String password, String email, String phone, LocalDateTime create_time, LocalDateTime update_time) {
+    // 注册用构造函数（包含时间）
+    public User(String username, String password, String email, String phone, LocalDateTime create_time,
+            LocalDateTime update_time) {
         this.username = username;
         this.password = password;
         this.email = email;

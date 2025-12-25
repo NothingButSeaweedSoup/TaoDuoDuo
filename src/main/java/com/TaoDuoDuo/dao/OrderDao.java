@@ -370,4 +370,103 @@ public class OrderDao {
         }
         return false;
     }
+
+    /**
+     * 获取所有订单（管理员功能）
+     * 
+     * @return 所有订单列表
+     */
+    public Optional<List<Order>> getAllOrders() {
+        String sql = "select * from `order` order by create_time desc";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<Order> orders = new ArrayList<>();
+            while (rs.next()) {
+                Order order = new Order(
+                        rs.getInt("order_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("shop_id"),
+                        rs.getString("order_status"),
+                        rs.getDouble("total_amount"),
+                        rs.getTimestamp("create_time") != null
+                                ? rs.getTimestamp("create_time").toLocalDateTime()
+                                : null,
+                        rs.getTimestamp("update_time") != null
+                                ? rs.getTimestamp("update_time").toLocalDateTime()
+                                : null,
+                        rs.getString("alipay_order_no"));
+                orders.add(order);
+            }
+            DBUtil.close(rs, ps, conn);
+            return Optional.of(orders);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 获取最近的订单（管理员功能）
+     * 
+     * @param limit 限制数量
+     * @return 最近的订单列表
+     */
+    public Optional<List<Order>> getRecentOrders(int limit) {
+        String sql = "select * from `order` order by create_time desc limit ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, limit);
+            ResultSet rs = ps.executeQuery();
+            List<Order> orders = new ArrayList<>();
+            while (rs.next()) {
+                Order order = new Order(
+                        rs.getInt("order_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("shop_id"),
+                        rs.getString("order_status"),
+                        rs.getDouble("total_amount"),
+                        rs.getTimestamp("create_time") != null
+                                ? rs.getTimestamp("create_time").toLocalDateTime()
+                                : null,
+                        rs.getTimestamp("update_time") != null
+                                ? rs.getTimestamp("update_time").toLocalDateTime()
+                                : null,
+                        rs.getString("alipay_order_no"));
+                orders.add(order);
+            }
+            DBUtil.close(rs, ps, conn);
+            return Optional.of(orders);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 根据订单状态获取订单数量（管理员统计功能）
+     * 
+     * @param status 订单状态
+     * @return 订单数量
+     */
+    public int getOrderCountByStatus(String status) {
+        String sql = "select count(*) from `order` where order_status = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, status);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                DBUtil.close(rs, ps, conn);
+                return count;
+            }
+            DBUtil.close(rs, ps, conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

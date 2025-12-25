@@ -2,20 +2,27 @@ package com.TaoDuoDuo.entity;
 
 import java.time.LocalDateTime;
 
+/**
+ * 订单实体类
+ * 对应数据库中的order表
+ */
 public class Order {
-    private int order_id;
-    private int user_id;
-    private int shop_id;
-    private String order_status;
-    private double total_amount;
-    private LocalDateTime create_time;
-    private LocalDateTime update_time;
+    private int order_id; // 订单ID，主键
+    private int user_id; // 用户ID
+    private int shop_id; // 店铺ID
+    private String order_status; // 订单状态
+    private double total_amount; // 订单总金额
+    private LocalDateTime create_time; // 创建时间
+    private LocalDateTime update_time; // 更新时间
     private String alipay_order_no; // 支付宝订单号
 
+    // 默认构造函数
     public Order() {
     }
 
-    public Order(int user_id, int shop_id, String order_status, double total_amount, LocalDateTime create_time, LocalDateTime update_time) {
+    // 创建订单用构造函数（包含时间）
+    public Order(int user_id, int shop_id, String order_status, double total_amount, LocalDateTime create_time,
+            LocalDateTime update_time) {
         this.user_id = user_id;
         this.shop_id = shop_id;
         this.order_status = order_status;
@@ -24,6 +31,7 @@ public class Order {
         this.update_time = update_time;
     }
 
+    // 创建订单用构造函数
     public Order(int user_id, int shop_id, String order_status, double total_amount) {
         this.user_id = user_id;
         this.shop_id = shop_id;
@@ -31,7 +39,9 @@ public class Order {
         this.total_amount = total_amount;
     }
 
-    public Order(int order_id, int user_id, int shop_id, String order_status, double total_amount, LocalDateTime create_time, LocalDateTime update_time) {
+    // 完整构造函数（不含支付宝订单号）
+    public Order(int order_id, int user_id, int shop_id, String order_status, double total_amount,
+            LocalDateTime create_time, LocalDateTime update_time) {
         this.order_id = order_id;
         this.user_id = user_id;
         this.shop_id = shop_id;
@@ -41,7 +51,7 @@ public class Order {
         this.update_time = update_time;
     }
 
-    // 新增构造函数，包含支付宝订单号
+    // 创建订单用构造函数（包含支付宝订单号）
     public Order(int user_id, int shop_id, String order_status, double total_amount, String alipay_order_no) {
         this.user_id = user_id;
         this.shop_id = shop_id;
@@ -50,8 +60,9 @@ public class Order {
         this.alipay_order_no = alipay_order_no;
     }
 
-    public Order(int order_id, int user_id, int shop_id, String order_status, double total_amount, 
-                 LocalDateTime create_time, LocalDateTime update_time, String alipay_order_no) {
+    // 完整构造函数（包含支付宝订单号）
+    public Order(int order_id, int user_id, int shop_id, String order_status, double total_amount,
+            LocalDateTime create_time, LocalDateTime update_time, String alipay_order_no) {
         this.order_id = order_id;
         this.user_id = user_id;
         this.shop_id = shop_id;
@@ -128,6 +139,7 @@ public class Order {
 
     /**
      * 获取订单状态枚举
+     * 
      * @return OrderStatus枚举，如果状态无效则返回null
      */
     public OrderStatus getOrderStatusEnum() {
@@ -136,6 +148,7 @@ public class Order {
 
     /**
      * 设置订单状态（使用枚举）
+     * 
      * @param status OrderStatus枚举
      */
     public void setOrderStatus(OrderStatus status) {
@@ -144,6 +157,7 @@ public class Order {
 
     /**
      * 检查订单是否可以转换到指定状态
+     * 
      * @param targetStatus 目标状态
      * @return 如果可以转换返回true，否则返回false
      */
@@ -154,6 +168,7 @@ public class Order {
 
     /**
      * 检查订单是否可以取消
+     * 
      * @return 如果可以取消返回true，否则返回false
      */
     public boolean canBeCancelled() {
@@ -163,6 +178,7 @@ public class Order {
 
     /**
      * 检查订单是否可以评价
+     * 
      * @return 如果可以评价返回true，否则返回false
      */
     public boolean canBeReviewed() {

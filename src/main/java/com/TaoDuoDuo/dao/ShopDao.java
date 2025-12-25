@@ -18,7 +18,7 @@ public class ShopDao {
      * @param shop 包含商店信息的 Shop 对象，需要包含 shop_name 和 owner_id
      * @return 添加成功返回 true，失败返回 false
      */
-    public boolean addShop(Shop shop){
+    public boolean addShop(Shop shop) {
         String sql = "insert into shop(shop_name,owner_id) values(?,?)";
         Connection conn = DBUtil.getConnection();
         try {
@@ -38,10 +38,10 @@ public class ShopDao {
             return result;
         } catch (SQLException e) {
             // 检查是否是触发器导致的用户角色重复插入错误
-            if (e.getMessage() != null && 
-                e.getMessage().contains("Duplicate entry") && 
-                e.getMessage().contains("user_role")) {
-                
+            if (e.getMessage() != null &&
+                    e.getMessage().contains("Duplicate entry") &&
+                    e.getMessage().contains("user_role")) {
+
                 // 这是触发器尝试重复插入用户角色导致的错误
                 // 但店铺可能已经成功创建，我们需要检查
                 try {
@@ -51,7 +51,7 @@ public class ShopDao {
                     checkPs.setString(1, shop.getShop_name());
                     checkPs.setInt(2, shop.getOwner_id());
                     ResultSet rs = checkPs.executeQuery();
-                    
+
                     if (rs.next()) {
                         // 店铺已经成功创建，设置ID并返回成功
                         int shopId = rs.getInt("shop_id");
@@ -75,7 +75,7 @@ public class ShopDao {
      * @param shop 包含商店信息的 Shop 对象，需要包含 shop_id、shop_name 和 owner_id
      * @return 更新成功返回 true，失败返回 false
      */
-    public boolean updateShop(Shop shop){
+    public boolean updateShop(Shop shop) {
         String sql = "update shop set shop_name = ?,owner_id = ? where shop_id = ?";
         Connection conn = DBUtil.getConnection();
         try {
@@ -86,7 +86,7 @@ public class ShopDao {
             boolean result = ps.executeUpdate() > 0;
             DBUtil.close(null, ps, conn);
             return result;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -98,7 +98,7 @@ public class ShopDao {
      * @param shop_id 要删除的商店的编号
      * @return 删除成功返回 true，失败返回 false
      */
-    public boolean deleteShop(int shop_id){
+    public boolean deleteShop(int shop_id) {
         String sql = "delete from shop where shop_id = ?";
         Connection conn = DBUtil.getConnection();
         try {
@@ -107,7 +107,7 @@ public class ShopDao {
             boolean result = ps.executeUpdate() > 0;
             DBUtil.close(null, ps, conn);
             return result;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -119,7 +119,7 @@ public class ShopDao {
      * @param shop_id 要查询的商店的编号
      * @return 查询成功返回包含商店信息的 Shop 对象，失败返回 null
      */
-    public Optional<Shop> getShopById(int shop_id){
+    public Optional<Shop> getShopById(int shop_id) {
         String sql = "select * from shop where shop_id = ?";
         Connection conn = DBUtil.getConnection();
         try {
@@ -135,11 +135,11 @@ public class ShopDao {
                 shop.setUpdate_time(rs.getTimestamp("update_time").toLocalDateTime());
                 DBUtil.close(rs, ps, conn);
                 return Optional.of(shop);
-            }else {
+            } else {
                 DBUtil.close(rs, ps, conn);
                 return Optional.empty();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -151,7 +151,7 @@ public class ShopDao {
      * @param shop_name 要查询的商店的名称
      * @return 获取成功返回包含商店信息的 Shop 列表，失败返回 null
      */
-    public Optional<List<Shop>> getShopByName(String shop_name){
+    public Optional<List<Shop>> getShopByName(String shop_name) {
         String sql = "select * from shop where shop_name like ?";
         Connection conn = DBUtil.getConnection();
         try {
@@ -170,7 +170,7 @@ public class ShopDao {
             }
             DBUtil.close(rs, ps, conn);
             return Optional.of(shops);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -182,7 +182,7 @@ public class ShopDao {
      * @param owner_id 要查询的商店所有者的编号
      * @return 获取成功返回包含商店信息的 Shop 列表，失败返回 null
      */
-    public Optional<List<Shop>> getShopByOwnerId(int owner_id){
+    public Optional<List<Shop>> getShopByOwnerId(int owner_id) {
         String sql = "select * from shop where owner_id = ?";
         Connection conn = DBUtil.getConnection();
         try {
@@ -201,7 +201,7 @@ public class ShopDao {
             }
             DBUtil.close(rs, ps, conn);
             return Optional.of(shops);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -212,7 +212,7 @@ public class ShopDao {
      *
      * @return 获取成功返回包含商店信息的 Shop 列表，失败返回 null
      */
-    public Optional<List<Shop>> getAllShops(){
+    public Optional<List<Shop>> getAllShops() {
         String sql = "select * from shop";
         Connection conn = DBUtil.getConnection();
         try {
@@ -230,9 +230,52 @@ public class ShopDao {
             }
             DBUtil.close(rs, ps, conn);
             return Optional.of(shops);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    /**
+     * 管理员删除商铺
+     * 
+     * @param shopId 商铺ID
+     * @return 删除成功返回true
+     */
+    public boolean adminDeleteShop(int shopId) {
+        String sql = "delete from shop where shop_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, shopId);
+            boolean result = ps.executeUpdate() > 0;
+            DBUtil.close(null, ps, conn);
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 管理员更新商铺信息
+     * 
+     * @param shop 商铺对象
+     * @return 更新成功返回true
+     */
+    public boolean adminUpdateShop(Shop shop) {
+        String sql = "update shop set shop_name = ?, update_time = NOW() where shop_id = ?";
+        Connection conn = DBUtil.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, shop.getShop_name());
+            ps.setInt(2, shop.getShop_id());
+            boolean result = ps.executeUpdate() > 0;
+            DBUtil.close(null, ps, conn);
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
