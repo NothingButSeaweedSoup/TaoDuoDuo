@@ -611,7 +611,7 @@
                                                     <% } %>
 
                                                         <% if (userRole !=null && userRole==2) { %>
-                                                            <!-- 已经是商家，可以创建新店铺 -->
+                                                            <!-- 已经是商家 -->
                                                             <div
                                                                 style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 20px; margin-bottom: 25px; color: #52c41a; text-align: center;">
                                                                 <div style="font-size: 24px; margin-bottom: 10px;">
