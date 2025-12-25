@@ -75,7 +75,7 @@ public class CategoryServlet extends HttpServlet {
 
         Category category = categoryOpt.get();
 
-        // 获取分类路径（面包屑导航）
+        // 获取分类路径
         List<Category> categoryPath = categoryService.getCategoryPath(categoryId);
 
         // 获取分类下的商品

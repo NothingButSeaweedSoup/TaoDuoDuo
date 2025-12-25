@@ -348,7 +348,6 @@
                             <%@ include file="view/head.jsp" %>
 
                                 <div class="container">
-                                    <!-- 面包屑导航 -->
                                     <div class="breadcrumb">
                                         <a href="${pageContext.request.contextPath}/HomeServlet">首页</a>
                                         <c:forEach var="pathCategory" items="${categoryPath}" varStatus="status">
