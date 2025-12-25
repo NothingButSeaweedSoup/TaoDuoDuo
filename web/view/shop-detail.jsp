@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.TaoDuoDuo.entity.Shop" %>
-        <%@ page import="com.TaoDuoDuo.entity.Product" %>
-            <%@ page import="java.util.List" %>
-                <%@ page import="java.time.format.DateTimeFormatter" %>
-                    <%@ page import="java.text.DecimalFormat" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.TaoDuoDuo.entity.Shop" %>
+<%@ page import="com.TaoDuoDuo.entity.Product" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.text.DecimalFormat" %>
                         <!DOCTYPE html>
                         <html lang="zh-CN">
 
@@ -496,23 +497,19 @@
                                                         <h1>
                                                             <img src="${pageContext.request.contextPath}/icon/Shop.png" alt="店铺"
                                                                  style="width: 32px; height: 32px; vertical-align: middle; margin-right: 10px;">
-                                                            <%= shop.getShop_name() %>
+                                                            ${shop.shop_name}
                                                         </h1>
                                                         <div class="shop-meta">
-                                                            <div>店铺ID: <%= shop.getShop_id() %>
+                                                            <div>店铺ID: ${shop.shop_id}
                                                             </div>
-                                                            <div>创建时间: <%= shop.getCreate_time() !=null ?
-                                                                    shop.getCreate_time().format(DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss"))
-                                                                    : "未知" %>
+                                                            <div>创建时间: <%= shop.getCreate_time() != null ?
+                                                                shop.getCreate_time().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                                                                : "未知" %>
                                                             </div>
-                                                            <% if (shop.getUpdate_time() !=null &&
-                                                                !shop.getUpdate_time().equals(shop.getCreate_time())) {
-                                                                %>
-                                                                <div>更新时间: <%=
-                                                                        shop.getUpdate_time().format(DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss"))
-                                                                        %>
-                                                                </div>
-                                                                <% } %>
+                                                            <% if (shop.getUpdate_time() != null &&
+                                                                !shop.getUpdate_time().equals(shop.getCreate_time())) { %>
+                                                                <div>更新时间: <%= shop.getUpdate_time().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) %></div>
+                                                            <% } %>
                                                         </div>
                                                     </div>
                                                     <div class="header-actions">
@@ -529,12 +526,12 @@
                                                         action="${pageContext.request.contextPath}/ShopDetailServlet">
                                                         <input type="hidden" name="action" value="updateShop">
                                                         <input type="hidden" name="shopId"
-                                                            value="<%= shop.getShop_id() %>">
+                                                            value="${shop.shop_id}">
 
                                                         <div class="form-group">
                                                             <label class="form-label">店铺名称:</label>
                                                             <input type="text" name="shopName" class="form-input"
-                                                                value="<%= shop.getShop_name() %>"
+                                                                value="${shop.shop_name}"
                                                                 placeholder="请输入新的店铺名称" required maxlength="50"
                                                                 minlength="2">
                                                         </div>
@@ -549,87 +546,85 @@
                                             </div>
 
                                             <!-- 消息显示 -->
-                                            <% if (success !=null) { %>
+                                            <c:if test="${not empty success}">
                                                 <div class="message success">
                                                     <img src="${pageContext.request.contextPath}/icon/Success.png"
                                                          alt="成功"
                                                          style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
-                                                    <% if ("product_added".equals(success)) { %>
-                                                        商品添加成功！商品名称：<%= productName !=null ? productName : "" %>
-                                                            <% String newProductId=(String)
-                                                                request.getAttribute("newProductId"); if (newProductId
-                                                                !=null) { %>
+                                                    <c:choose>
+                                                        <c:when test="${success == 'product_added'}">
+                                                            商品添加成功！商品名称：${not empty productName ? productName : ''}
+                                                            <c:if test="${not empty newProductId}">
                                                                 <br>
                                                                 <button type="button" class="btn btn-primary btn-small"
-                                                                    style="margin-top: 10px;"
-                                                                    onclick="showImageManager(<%= newProductId %>)">
+                                                                        style="margin-top: 10px;"
+                                                                        onclick="showImageManager(<%= request.getAttribute("newProductId") %>)">
                                                                     <img src="${pageContext.request.contextPath}/icon/ImageFile.png"
                                                                          alt="选择"
                                                                          style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                                     立即上传商品图片
                                                                 </button>
-                                                                <% } %>
-                                                                    <% } else if ("shop_updated".equals(success)) { %>
-                                                                        店铺名称更新成功！新名称：<%= shopName !=null ? shopName : ""
-                                                                            %>
-                                                                            <% } else if
-                                                                                ("product_updated".equals(success)) { %>
-                                                                                商品信息更新成功！商品名称：<%= productName !=null ?
-                                                                                    productName : "" %>
-                                                                                    <% } else if
-                                                                                        ("product_deleted".equals(success))
-                                                                                        { %>
-                                                                                        商品删除成功！
-                                                                                        <% } else if
-                                                                                            ("listing_updated".equals(success))
-                                                                                            { %>
-                                                                                            <%= productName !=null ?
-                                                                                                productName : "商品状态更新成功"
-                                                                                                %>
-                                                                                                <% } else { %>
-                                                                                                    操作成功！
-                                                                                                    <% } %>
+                                                            </c:if>
+                                                        </c:when>
+                                                        <c:when test="${success == 'shop_updated'}">
+                                                            店铺名称更新成功！新名称：${not empty shopName ? shopName : ''}
+                                                        </c:when>
+                                                        <c:when test="${success == 'product_updated'}">
+                                                            商品信息更新成功！商品名称：${not empty productName ? productName : ''}
+                                                        </c:when>
+                                                        <c:when test="${success == 'product_deleted'}">
+                                                            商品删除成功！
+                                                        </c:when>
+                                                        <c:when test="${success == 'listing_updated'}">
+                                                            ${not empty productName ? productName : '商品状态更新成功'}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            操作成功！
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
-                                                <% } %>
+                                            </c:if>
 
-                                                    <% if (error !=null) { %>
-                                                        <div class="message error">
-                                                            ✗
-                                                            <% if ("invalid_params".equals(error)) { %>
-                                                                参数错误，请检查输入
-                                                                <% } else if ("invalid_values".equals(error)) { %>
-                                                                    价格和库存不能为负数
-                                                                    <% } else if ("invalid_numbers".equals(error)) { %>
-                                                                        价格和库存必须为有效数字
-                                                                        <% } else if ("add_failed".equals(error)) { %>
-                                                                            商品添加失败，请重试
-                                                                            <% } else if ("name_length".equals(error)) {
-                                                                                %>
-                                                                                店铺名称长度必须在2-50个字符之间
-                                                                                <% } else if
-                                                                                    ("name_exists".equals(error)) { %>
-                                                                                    店铺名称已被使用，请更换其他名称
-                                                                                    <% } else if
-                                                                                        ("product_not_found".equals(error))
-                                                                                        { %>
-                                                                                        商品不存在或无权限操作
-                                                                                        <% } else if
-                                                                                            ("update_failed".equals(error))
-                                                                                            { %>
-                                                                                            更新失败，请重试
-                                                                                            <% } else if
-                                                                                                ("delete_failed".equals(error))
-                                                                                                { %>
-                                                                                                删除失败，请重试
-                                                                                                <% } else if
-                                                                                                    ("listing_failed".equals(error))
-                                                                                                    { %>
-                                                                                                    状态更新失败，请重试
-                                                                                                    <% } else { %>
-                                                                                                        操作失败，请重试
-                                                                                                        <% } %>
-                                                        </div>
-                                                        <% } %>
+                                            <c:if test="${not empty error}">
+                                                <div class="message error">
+                                                    ✗
+                                                    <c:choose>
+                                                        <c:when test="${error == 'invalid_params'}">
+                                                            参数错误，请检查输入
+                                                        </c:when>
+                                                        <c:when test="${error == 'invalid_values'}">
+                                                            价格和库存不能为负数
+                                                        </c:when>
+                                                        <c:when test="${error == 'invalid_numbers'}">
+                                                            价格和库存必须为有效数字
+                                                        </c:when>
+                                                        <c:when test="${error == 'add_failed'}">
+                                                            商品添加失败，请重试
+                                                        </c:when>
+                                                        <c:when test="${error == 'name_length'}">
+                                                            店铺名称长度必须在2-50个字符之间
+                                                        </c:when>
+                                                        <c:when test="${error == 'name_exists'}">
+                                                            店铺名称已被使用，请更换其他名称
+                                                        </c:when>
+                                                        <c:when test="${error == 'product_not_found'}">
+                                                            商品不存在或无权限操作
+                                                        </c:when>
+                                                        <c:when test="${error == 'update_failed'}">
+                                                            更新失败，请重试
+                                                        </c:when>
+                                                        <c:when test="${error == 'delete_failed'}">
+                                                            删除失败，请重试
+                                                        </c:when>
+                                                        <c:when test="${error == 'listing_failed'}">
+                                                            状态更新失败，请重试
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            操作失败，请重试
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </c:if>
 
                                                             <div class="content-grid">
                                                                 <!-- 左侧：添加商品 -->
@@ -752,57 +747,42 @@
                                                                                                     %> |
                                                                                                     分类: <%=
                                                                                                         product.getCategory_id()
-                                                                                                        %> |
-                                                                                                        <span
-                                                                                                            class="status-badge <%= product.isProduct_listing() ? "status-listed"
-                                                                                                            : "status-unlisted"
-                                                                                                            %>">
-                                                                                                            <%= product.isProduct_listing()
-                                                                                                                ? "已上架"
-                                                                                                                : "已下架"
-                                                                                                                %>
-                                                                                                        </span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="product-actions">
-                                                                                            <button type="button"
-                                                                                                class="btn btn-secondary btn-small"
-                                                                                                onclick="showEditProductForm(<%= product.getProduct_id() %>)">
-                                                                                                编辑
-                                                                                            </button>
-                                                                                            <button type="button"
-                                                                                                class="btn btn-primary btn-small"
-                                                                                                onclick="showImageManager(<%= product.getProduct_id() %>)">
-                                                                                                管理图片
-                                                                                            </button>
-                                                                                            <% if
-                                                                                                (product.isProduct_listing())
-                                                                                                { %>
-                                                                                                <button type="button"
-                                                                                                    class="btn btn-warning btn-small"
-                                                                                                    onclick="toggleListing(<%= product.getProduct_id() %>, false)">
-                                                                                                    下架
-                                                                                                </button>
-                                                                                                <% } else { %>
-                                                                                                    <button
-                                                                                                        type="button"
-                                                                                                        class="btn btn-success btn-small"
-                                                                                                        onclick="toggleListing(<%= product.getProduct_id() %>, true)">
-                                                                                                        上架
-                                                                                                    </button>
-                                                                                                    <% } %>
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            class="btn btn-danger btn-small"
-                                                                                                            onclick="deleteProduct(<%= product.getProduct_id() %>, '<%= product.getProduct_name() %>')">
-                                                                                                            删除
-                                                                                                        </button>
-                                                                                        </div>
+                                                                                        %> |
+                                                                                        <span class="status-badge <%= product.isProduct_listing() ? "status-listed" : "status-unlisted" %>">
+                                                                                            <%= product.isProduct_listing() ? "已上架" : "已下架" %>
+                                                                                        </span>
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="product-actions">
+                                                                                    <button type="button" class="btn btn-secondary btn-small"
+                                                                                            onclick="showEditProductForm(<%= product.getProduct_id() %>)">
+                                                                                        编辑
+                                                                                    </button>
+                                                                                    <button type="button" class="btn btn-primary btn-small"
+                                                                                            onclick="showImageManager(<%= product.getProduct_id() %>)">
+                                                                                        管理图片
+                                                                                    </button>
+                                                                                    <% if (product.isProduct_listing()) { %>
+                                                                                        <button type="button" class="btn btn-warning btn-small"
+                                                                                                onclick="toggleListing(<%= product.getProduct_id() %>, false)">
+                                                                                            下架
+                                                                                        </button>
+                                                                                    <% } else { %>
+                                                                                        <button type="button" class="btn btn-success btn-small"
+                                                                                                onclick="toggleListing(<%= product.getProduct_id() %>, true)">
+                                                                                            上架
+                                                                                        </button>
+                                                                                    <% } %>
+                                                                                    <button type="button" class="btn btn-danger btn-small"
+                                                                                            onclick="deleteProduct(<%= product.getProduct_id() %>, '<%= product.getProduct_name() %>')">
+                                                                                        删除
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
 
-                                                                                    <div class="product-description">
-                                                                                        <%= product.getDescription() %>
-                                                                                    </div>
+                                                                            <div class="product-description">
+                                                                                <%= product.getDescription() %>
+                                                                            </div>
 
                                                                                     <div class="product-stats">
                                                                                         <div class="stat-item">

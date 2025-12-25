@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.TaoDuoDuo.entity.User" %>
-        <%@ page import="com.TaoDuoDuo.entity.UserRole" %>
-            <%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.TaoDuoDuo.entity.User" %>
+<%@ page import="com.TaoDuoDuo.entity.UserRole" %>
+<%@ page import="java.util.List" %>
                 <!DOCTYPE html>
                 <html lang="zh-CN">
 
@@ -375,7 +376,7 @@
                                             个人信息
                                         </a>
                                     </li>
-                                    <% if (userRole !=null && userRole==1) { %>
+                                    <c:if test="${sessionScope.role == 1}">
                                         <li class="menu-item">
                                             <a href="${pageContext.request.contextPath}/CartServlet" class="menu-link">
                                                 <img src="${pageContext.request.contextPath}/icon/category.png" alt="购物车"
@@ -383,23 +384,23 @@
                                                 购物车
                                             </a>
                                         </li>
-                                        <% } %>
-                                            <% if (canSwitchRole !=null && canSwitchRole) { %>
-                                                <li class="menu-item">
-                                                    <a href="#" class="menu-link" onclick="showContent('role-switch')">
-                                                        <img src="${pageContext.request.contextPath}/icon/RoleChange.png"
-                                                            alt="角色切换" class="menu-icon">
-                                                        角色切换
-                                                    </a>
-                                                </li>
-                                                <% } %>
-                                                    <li class="menu-item">
-                                                        <a href="#" class="menu-link" onclick="showContent('merchant')">
-                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
-                                                                alt="商家入驻" class="menu-icon">
-                                                            商家入驻
-                                                        </a>
-                                                    </li>
+                                    </c:if>
+                                    <c:if test="${canSwitchRole}">
+                                        <li class="menu-item">
+                                            <a href="#" class="menu-link" onclick="showContent('role-switch')">
+                                                <img src="${pageContext.request.contextPath}/icon/RoleChange.png"
+                                                    alt="角色切换" class="menu-icon">
+                                                角色切换
+                                            </a>
+                                        </li>
+                                    </c:if>
+                                    <li class="menu-item">
+                                        <a href="#" class="menu-link" onclick="showContent('merchant')">
+                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                alt="商家入驻" class="menu-icon">
+                                            商家入驻
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
 
@@ -410,24 +411,20 @@
                                     <h2 class="content-title">个人信息修改</h2>
 
                                     <!-- 消息显示 -->
-                                    <% String profileSuccess=(String) request.getAttribute("success"); String
-                                        profileError=(String) request.getAttribute("error"); %>
-                                        <% if (profileSuccess !=null) { %>
-                                            <div
-                                                style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
-                                                <img src="${pageContext.request.contextPath}/icon/Success.png"
-                                                     alt="成功"
-                                                     style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
-                                                <%= profileSuccess %>
-                                            </div>
-                                            <% } %>
+                                    <c:if test="${not empty success}">
+                                        <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
+                                            <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                                 alt="成功"
+                                                 style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                            ${success}
+                                        </div>
+                                    </c:if>
 
-                                                <% if (profileError !=null) { %>
-                                                    <div
-                                                        style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
-                                                        ✗ <%= profileError %>
-                                                    </div>
-                                                    <% } %>
+                                    <c:if test="${not empty error}">
+                                        <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
+                                            ✗ ${error}
+                                        </div>
+                                    </c:if>
 
                                                         <form id="profileForm" method="post"
                                                             action="${pageContext.request.contextPath}/UpdateProfileServlet">
@@ -521,213 +518,210 @@
                                             %>
 
                                             <!-- 消息显示 -->
-                                            <% if (success !=null) { %>
-                                                <div
-                                                    style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
-                                                    <% if ("role_switched".equals(success)) { %>
+                                            <c:if test="${not empty success and success == 'role_switched'}">
+                                                <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #52c41a;">
                                                     <img src="${pageContext.request.contextPath}/icon/Success.png"
                                                          alt="成功"
                                                          style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
                                                     角色切换成功！
-                                                    <% } %>
                                                 </div>
-                                                <% } %>
+                                            </c:if>
 
-                                                    <% if (error !=null) { %>
-                                                        <div
-                                                            style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
-                                                            <% if ("no_permission".equals(error)) { %>
-                                                                ✗ 您没有权限切换到该角色！
-                                                                <% } else if ("invalid_role".equals(error)) { %>
-                                                                    ✗ 无效的角色参数！
-                                                                    <% } else { %>
-                                                                        ✗ 角色切换失败，请重试！
-                                                                        <% } %>
+                                            <c:if test="${not empty error}">
+                                                <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
+                                                    <c:choose>
+                                                        <c:when test="${error == 'no_permission'}">
+                                                            ✗ 您没有权限切换到该角色！
+                                                        </c:when>
+                                                        <c:when test="${error == 'invalid_role'}">
+                                                            ✗ 无效的角色参数！
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            ✗ 角色切换失败，请重试！
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </c:if>
+
+                                            <div class="role-switch">
+                                                <div class="role-switch-title">当前身份切换 (您拥有 <%= roleCount %> 个身份)</div>
+                                                <div class="role-options">
+                                                    <% if (userRoles != null) { 
+                                                        for (UserRole ur : userRoles) { 
+                                                            int roleId = ur.getRole_id(); 
+                                                            String roleName = ""; 
+                                                            switch (roleId) { 
+                                                                case 1: roleName = "用户"; break; 
+                                                                case 2: roleName = "商家"; break; 
+                                                                case 3: roleName = "管理员"; break; 
+                                                                default: roleName = "未知"; break; 
+                                                            } %>
+                                                        <div class="role-option <%= userRole == roleId ? "active" : "" %>" onclick="switchRole(<%= roleId %>)">
+                                                            <%= roleName %>
                                                         </div>
-                                                        <% } %>
+                                                        <% } 
+                                                    } %>
+                                                </div>
+                                            </div>
 
-                                                            <div class="role-switch">
-                                                                <div class="role-switch-title">当前身份切换 (您拥有 <%= roleCount
-                                                                        %> 个身份)</div>
-                                                                <div class="role-options">
-                                                                    <% if (userRoles !=null) { for (UserRole ur :
-                                                                        userRoles) { int roleId=ur.getRole_id(); String
-                                                                        roleName="" ; switch (roleId) { case 1:
-                                                                        roleName="用户" ; break; case 2: roleName="商家" ;
-                                                                        break; case 3: roleName="管理员" ; break; default:
-                                                                        roleName="未知" ; break; } %>
-                                                                        <div class="role-option <%= userRole == roleId ? "active" : "" %>" onclick="switchRole(<%=
-                                                                                roleId %>)">
-                                                                                <%= roleName %>
-                                                                        </div>
-                                                                        <% } } %>
-                                                                </div>
-                                                            </div>
-
-                                                            <div
-                                                                style="text-align: center; padding: 40px 0; color: #8c8c8c;">
-                                                                <div style="font-size: 48px; margin-bottom: 20px;">
-                                                                    <img src="${pageContext.request.contextPath}/icon/RoleChange.png"
-                                                                        alt="角色切换" style="width: 48px; height: 48px;">
-                                                                </div>
-                                                                <div>选择您要切换到的身份</div>
-                                                                <div
-                                                                    style="font-size: 14px; margin-top: 10px; color: #bfbfbf;">
-                                                                    不同身份拥有不同的功能权限
-                                                                </div>
-                                                            </div>
+                                            <div style="text-align: center; padding: 40px 0; color: #8c8c8c;">
+                                                <div style="font-size: 48px; margin-bottom: 20px;">
+                                                    <img src="${pageContext.request.contextPath}/icon/RoleChange.png"
+                                                        alt="角色切换" style="width: 48px; height: 48px;">
+                                                </div>
+                                                <div>选择您要切换到的身份</div>
+                                                <div style="font-size: 14px; margin-top: 10px; color: #bfbfbf;">
+                                                    不同身份拥有不同的功能权限
+                                                </div>
+                                            </div>
                                 </div>
 
                                 <!-- 商家入驻页面 -->
-                                <div id="merchant" class="content-section" style="display: none;">
+                                <div id="merchant" class="content-section" style="display: none;"
+                                     data-debug="merchant-section-loaded"></div>
                                     <h2 class="content-title">商家入驻</h2>
 
                                     <!-- 消息显示 -->
-                                    <% String merchantSuccess=(String) request.getAttribute("success"); String
-                                        merchantError=(String) request.getAttribute("error"); String shopName=(String)
-                                        request.getAttribute("shopName"); %>
+                                    <% 
+                                        String merchantSuccess = (String) request.getAttribute("success"); 
+                                        String merchantError = (String) request.getAttribute("error"); 
+                                        String shopName = (String) request.getAttribute("shopName"); 
+                                    %>
 
-                                        <% if (merchantSuccess !=null && "merchant_application_success"
-                                            .equals(merchantSuccess)) { %>
-                                            <div class="merchant-success">
+                                    <% if (merchantSuccess != null && "merchant_application_success".equals(merchantSuccess)) { %>
+                                        <div class="merchant-success">
+                                            <div style="font-size: 24px; margin-bottom: 10px;">
+                                                <img src="${pageContext.request.contextPath}/icon/RoleSelected.png"
+                                                    alt="成功" style="width: 48px; height: 48px;">
+                                            </div>
+                                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                                                恭喜！商家入驻申请成功</div>
+                                            <div style="font-size: 14px;">店铺名称：<%= shopName %></div>
+                                            <div style="font-size: 14px; margin-top: 5px; color: #389e0d;">
+                                                您已自动获得商家角色，可以开始管理您的店铺了</div>
+                                        </div>
+                                    <% } %>
+
+                                    <c:if test="${not empty merchantError}">
+                                        <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
+                                            ✗ ${merchantError}
+                                        </div>
+                                    </c:if>
+
+                                    <c:choose>
+                                        <c:when test="${sessionScope.role == 2}">
+                                            <!-- 已经是商家 -->
+                                            <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 20px; margin-bottom: 25px; color: #52c41a; text-align: center;">
                                                 <div style="font-size: 24px; margin-bottom: 10px;">
                                                     <img src="${pageContext.request.contextPath}/icon/RoleSelected.png"
-                                                        alt="成功" style="width: 48px; height: 48px;">
+                                                        alt="已选择角色" style="width: 48px; height: 48px;">
                                                 </div>
                                                 <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
-                                                    恭喜！商家入驻申请成功</div>
-                                                <div style="font-size: 14px;">店铺名称：<%= shopName %>
-                                                </div>
-                                                <div style="font-size: 14px; margin-top: 5px; color: #389e0d;">
-                                                    您已自动获得商家角色，可以开始管理您的店铺了</div>
+                                                    您已经是商家</div>
+                                                <div style="font-size: 14px; color: #389e0d;">
+                                                    您可以创建新的店铺或在商铺管理中管理现有店铺</div>
                                             </div>
-                                            <% } %>
 
-                                                <% if (merchantError !=null) { %>
-                                                    <div
-                                                        style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #ff4d4f;">
-                                                        ✗ <%= merchantError %>
+                                                    <!-- 创建新店铺表单 -->
+                                                    <div class="merchant-form-container">
+                                                        <div class="merchant-notice">
+                                                            <h3>
+                                                                <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                    alt="创建店铺"
+                                                                    style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
+                                                                创建新店铺
+                                                            </h3>
+                                                            <ul>
+                                                                <li>您可以创建多个店铺</li>
+                                                                <li>店铺名称可以在商铺管理中修改</li>
+                                                                <li>店铺名称长度需在2-50个字符之间</li>
+                                                                <li>店铺名称不能与现有店铺重复</li>
+                                                            </ul>
+                                                        </div>
+
+                                                        <form id="createShopForm" method="post"
+                                                            action="${pageContext.request.contextPath}/MerchantApplicationServlet">
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">用户ID:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="text" class="form-input"
+                                                                        value="${sessionScope.userId}"
+                                                                    disabled placeholder="自动关联当前用户">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">店铺名称:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="text" name="shopName" class="form-input"
+                                                                        placeholder="请输入新店铺的名称" required
+                                                                        maxlength="50" minlength="2">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-actions">
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                        alt="创建"
+                                                                        style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+                                                                    创建新店铺
+                                                                </button>
+                                                                <button type="reset" class="btn btn-secondary">重置</button>
+                                                            </div>
+                                                        </form>
                                                     </div>
-                                                    <% } %>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <!-- 商家入驻申请表单 -->
+                                                    <div class="merchant-form-container">
+                                                        <div class="merchant-notice">
+                                                            <h3>
+                                                                <img src="${pageContext.request.contextPath}/icon/BillInquiry.png"
+                                                                    alt="须知"
+                                                                    style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
+                                                                入驻须知
+                                                            </h3>
+                                                            <ul>
+                                                                <li>提交申请后将自动获得商家角色</li>
+                                                                <li>店铺名称可以在商铺管理中修改</li>
+                                                                <li>店铺名称长度需在2-50个字符之间</li>
+                                                                <li>店铺名称不能与现有店铺重复</li>
+                                                            </ul>
+                                                        </div>
 
-                                                        <% if (userRole !=null && userRole==2) { %>
-                                                            <!-- 已经是商家 -->
-                                                            <div
-                                                                style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; padding: 20px; margin-bottom: 25px; color: #52c41a; text-align: center;">
-                                                                <div style="font-size: 24px; margin-bottom: 10px;">
-                                                                    <img src="${pageContext.request.contextPath}/icon/RoleSelected.png"
-                                                                        alt="已选择角色" style="width: 48px; height: 48px;">
+                                                        <form id="merchantApplicationForm" method="post"
+                                                            action="${pageContext.request.contextPath}/MerchantApplicationServlet">
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">用户ID:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="text" class="form-input"
+                                                                        value="<%= session.getAttribute("userId") %>"
+                                                                    disabled placeholder="自动关联当前用户">
                                                                 </div>
-                                                                <div
-                                                                    style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
-                                                                    您已经是商家</div>
-                                                                <div style="font-size: 14px; color: #389e0d;">
-                                                                    您可以创建新的店铺或在商铺管理中管理现有店铺</div>
                                                             </div>
 
-                                                            <!-- 创建新店铺表单 -->
-                                                            <div class="merchant-form-container">
-                                                                <div class="merchant-notice">
-                                                                    <h3>
-                                                                        <img src="${pageContext.request.contextPath}/icon/Shop.png"
-                                                                            alt="创建店铺"
-                                                                            style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
-                                                                        创建新店铺
-                                                                    </h3>
-                                                                    <ul>
-                                                                        <li>您可以创建多个店铺</li>
-                                                                        <li>店铺名称可以在商铺管理中修改</li>
-                                                                        <li>店铺名称长度需在2-50个字符之间</li>
-                                                                        <li>店铺名称不能与现有店铺重复</li>
-                                                                    </ul>
+                                                            <div class="form-group clearfix">
+                                                                <label class="form-label">店铺名称:</label>
+                                                                <div class="form-input-wrapper">
+                                                                    <input type="text" name="shopName" class="form-input"
+                                                                        placeholder="请输入您的店铺名称" required
+                                                                        maxlength="50" minlength="2">
                                                                 </div>
-
-                                                                <form id="createShopForm" method="post"
-                                                                    action="${pageContext.request.contextPath}/MerchantApplicationServlet">
-                                                                    <div class="form-group clearfix">
-                                                                        <label class="form-label">用户ID:</label>
-                                                                        <div class="form-input-wrapper">
-                                                                            <input type="text" class="form-input"
-                                                                                value="<%= session.getAttribute("userId") %>"
-                                                                            disabled placeholder="自动关联当前用户">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group clearfix">
-                                                                        <label class="form-label">店铺名称:</label>
-                                                                        <div class="form-input-wrapper">
-                                                                            <input type="text" name="shopName"
-                                                                                class="form-input"
-                                                                                placeholder="请输入新店铺的名称" required
-                                                                                maxlength="50" minlength="2">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-actions">
-                                                                        <button type="submit" class="btn btn-primary">
-                                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
-                                                                                alt="创建"
-                                                                                style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
-                                                                            创建新店铺
-                                                                        </button>
-                                                                        <button type="reset"
-                                                                            class="btn btn-secondary">重置</button>
-                                                                    </div>
-                                                                </form>
                                                             </div>
-                                                            <% } else { %>
-                                                                <!-- 商家入驻申请表单 -->
-                                                                <div class="merchant-form-container">
-                                                                    <div class="merchant-notice">
-                                                                        <h3>
-                                                                            <img src="${pageContext.request.contextPath}/icon/BillInquiry.png"
-                                                                                alt="须知"
-                                                                                style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px;">
-                                                                            入驻须知
-                                                                        </h3>
-                                                                        <ul>
-                                                                            <li>提交申请后将自动获得商家角色</li>
-                                                                            <li>店铺名称可以在商铺管理中修改</li>
-                                                                            <li>店铺名称长度需在2-50个字符之间</li>
-                                                                            <li>店铺名称不能与现有店铺重复</li>
-                                                                        </ul>
-                                                                    </div>
 
-                                                                    <form id="merchantApplicationForm" method="post"
-                                                                        action="${pageContext.request.contextPath}/MerchantApplicationServlet">
-                                                                        <div class="form-group clearfix">
-                                                                            <label class="form-label">用户ID:</label>
-                                                                            <div class="form-input-wrapper">
-                                                                                <input type="text" class="form-input"
-                                                                                    value="<%= session.getAttribute("userId") %>"
-                                                                                disabled placeholder="自动关联当前用户">
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="form-group clearfix">
-                                                                            <label class="form-label">店铺名称:</label>
-                                                                            <div class="form-input-wrapper">
-                                                                                <input type="text" name="shopName"
-                                                                                    class="form-input"
-                                                                                    placeholder="请输入您的店铺名称" required
-                                                                                    maxlength="50" minlength="2">
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="form-actions">
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary">
-                                                                                <img src="${pageContext.request.contextPath}/icon/Shop.png"
-                                                                                    alt="申请"
-                                                                                    style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
-                                                                                申请入驻
-                                                                            </button>
-                                                                            <button type="reset"
-                                                                                class="btn btn-secondary">重置</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                                <% } %>
+                                                            <div class="form-actions">
+                                                                <button type="submit" class="btn btn-primary">
+                                                                    <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                        alt="申请"
+                                                                        style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+                                                                    申请入驻
+                                                                </button>
+                                                                <button type="reset" class="btn btn-secondary">重置</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
                                 </div>
                             </div>
                         </div>

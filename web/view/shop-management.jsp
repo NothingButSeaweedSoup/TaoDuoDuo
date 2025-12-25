@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ page import="com.TaoDuoDuo.entity.Shop" %>
-        <%@ page import="java.util.List" %>
-            <%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.TaoDuoDuo.entity.Shop" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
                 <!DOCTYPE html>
                 <html lang="zh-CN">
 
@@ -228,113 +229,102 @@
 
                             <div class="content-card">
                                 <!-- 消息显示 -->
-                                <% String success=(String) request.getAttribute("success"); String error=(String)
-                                    request.getAttribute("error"); String shopName=request.getParameter("shopName"); %>
+                                <c:if test="${not empty success}">
+                                    <div class="message success">
+                                        <img src="${pageContext.request.contextPath}/icon/Success.png"
+                                             alt="成功"
+                                             style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
+                                        <c:choose>
+                                            <c:when test="${success == 'shop_updated'}">
+                                                店铺信息更新成功！新店铺名称：${not empty param.shopName ? param.shopName : ''}
+                                            </c:when>
+                                            <c:otherwise>
+                                                操作成功！
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                </c:if>
 
-                                    <% if (success !=null) { %>
-                                        <div class="message success">
-                                            <% if ("shop_updated".equals(success)) { %>
-                                            <img src="${pageContext.request.contextPath}/icon/Success.png"
-                                                 alt="成功"
-                                                 style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
-                                            店铺信息更新成功！新店铺名称：<%= shopName !=null ? shopName : "" %>
-                                            <% } else { %>
-                                            <img src="${pageContext.request.contextPath}/icon/Success.png"
-                                                 alt="成功"
-                                                 style="width: 14px; height: 14px; vertical-align: middle; margin-right: 4px;">
-                                            操作成功！
-                                            <% } %>
-                                        </div>
-                                        <% } %>
+                                <c:if test="${not empty error}">
+                                    <div class="message error">
+                                        ✗
+                                        <c:choose>
+                                            <c:when test="${error == 'no_permission'}">
+                                                您没有权限执行此操作
+                                            </c:when>
+                                            <c:when test="${error == 'invalid_params'}">
+                                                参数错误，请检查输入
+                                            </c:when>
+                                            <c:when test="${error == 'name_length'}">
+                                                店铺名称长度必须在2-50个字符之间
+                                            </c:when>
+                                            <c:when test="${error == 'shop_not_found'}">
+                                                店铺不存在
+                                            </c:when>
+                                            <c:when test="${error == 'name_exists'}">
+                                                店铺名称已被使用，请更换其他名称
+                                            </c:when>
+                                            <c:when test="${error == 'invalid_shop_id'}">
+                                                无效的店铺ID
+                                            </c:when>
+                                            <c:when test="${error == 'system_error'}">
+                                                系统错误，请稍后重试
+                                            </c:when>
+                                            <c:otherwise>
+                                                操作失败，请重试
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                </c:if>
 
-                                            <% if (error !=null) { %>
-                                                <div class="message error">
-                                                    ✗
-                                                    <% if ("no_permission".equals(error)) { %>
-                                                        您没有权限执行此操作
-                                                        <% } else if ("invalid_params".equals(error)) { %>
-                                                            参数错误，请检查输入
-                                                            <% } else if ("name_length".equals(error)) { %>
-                                                                店铺名称长度必须在2-50个字符之间
-                                                                <% } else if ("shop_not_found".equals(error)) { %>
-                                                                    店铺不存在
-                                                                    <% } else if ("name_exists".equals(error)) { %>
-                                                                        店铺名称已被使用，请更换其他名称
-                                                                        <% } else if ("invalid_shop_id".equals(error)) {
-                                                                            %>
-                                                                            无效的店铺ID
-                                                                            <% } else if ("system_error".equals(error))
-                                                                                { %>
-                                                                                系统错误，请稍后重试
-                                                                                <% } else { %>
-                                                                                    操作失败，请重试
-                                                                                    <% } %>
-                                                </div>
-                                                <% } %>
-
-                                                    <!-- 店铺列表 -->
-                                                    <% Boolean hasShops=(Boolean) request.getAttribute("hasShops");
-                                                        List<Shop> userShops = (List<Shop>)
-                                                            request.getAttribute("userShops");
-                                                            %>
-
-                                                            <% if (hasShops !=null && hasShops && userShops !=null) { %>
-                                                                <div class="shop-list">
-                                                                    <% for (Shop shop : userShops) { %>
-                                                                        <div class="shop-item">
-                                                                            <div class="shop-header">
-                                                                                <div class="shop-info">
-                                                                                    <h3>
-                                                                                        <%= shop.getShop_name() %>
-                                                                                    </h3>
-                                                                                    <div class="shop-meta">
-                                                                                        <div>店铺ID: <%= shop.getShop_id()
-                                                                                                %>
-                                                                                        </div>
-                                                                                        <div>创建时间: <%=
-                                                                                                shop.getCreate_time()
-                                                                                                !=null ?
-                                                                                                shop.getCreate_time().format(DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss")) : "未知" %>
-                                                                                        </div>
-                                                                                        <% if (shop.getUpdate_time()
-                                                                                            !=null &&
-                                                                                            !shop.getUpdate_time().equals(shop.getCreate_time()))
-                                                                                            { %>
-                                                                                            <div>更新时间: <%=
-                                                                                                    shop.getUpdate_time().format(DateTimeFormatter.ofPattern("yyyy-MM-ddHH:mm:ss")) %>
-                                                                                            </div>
-                                                                                            <% } %>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="shop-actions">
-                                                                                    <a href="${pageContext.request.contextPath}/ShopDetailServlet?shopId=<%= shop.getShop_id() %>"
-                                                                                        class="btn btn-primary">
-                                                                                        <img src="${pageContext.request.contextPath}/icon/ProductManaging.png"
-                                                                                            alt="管理"
-                                                                                            style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
-                                                                                        管理店铺
-                                                                                    </a>
-                                                                                </div>
+                                                <!-- 店铺列表 -->
+                                                <c:choose>
+                                                    <c:when test="${hasShops and not empty userShops}">
+                                                        <div class="shop-list">
+                                                            <c:forEach var="shop" items="${userShops}">
+                                                                <div class="shop-item">
+                                                                    <div class="shop-header">
+                                                                        <div class="shop-info">
+                                                                            <h3>${shop.shop_name}</h3>
+                                                                            <div class="shop-meta">
+                                                                                <div>店铺ID: ${shop.shop_id}</div>
+                                                                                <div>创建时间: ${not empty shop.create_time ? shop.create_time : '未知'}</div>
+                                                                                <c:if test="${not empty shop.update_time and shop.update_time != shop.create_time}">
+                                                                                    <div>更新时间: ${shop.update_time}</div>
+                                                                                </c:if>
                                                                             </div>
                                                                         </div>
-                                                                        <% } %>
-                                                                </div>
-                                                                <% } else { %>
-                                                                    <!-- 空状态 -->
-                                                                    <div class="empty-state">
-                                                                        <div class="icon">
-                                                                            <img src="${pageContext.request.contextPath}/icon/Shop.png"
-                                                                                 alt="暂无店铺"
-                                                                                 style="width: 64px; height: 64px;">
+                                                                        <div class="shop-actions">
+                                                                            <a href="${pageContext.request.contextPath}/ShopDetailServlet?shopId=${shop.shop_id}"
+                                                                               class="btn btn-primary">
+                                                                                <img src="${pageContext.request.contextPath}/icon/ProductManaging.png"
+                                                                                     alt="管理"
+                                                                                     style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
+                                                                                管理店铺
+                                                                            </a>
                                                                         </div>
-                                                                        <h3>暂无店铺</h3>
-                                                                        <p>您还没有创建任何店铺，请先申请商家入驻</p>
-                                                                        <a href="${pageContext.request.contextPath}/ProfileServlet"
-                                                                            class="btn btn-primary">
-                                                                            前往申请入驻
-                                                                        </a>
                                                                     </div>
-                                                                    <% } %>
+                                                                </div>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <!-- 空状态 -->
+                                                        <div class="empty-state">
+                                                            <div class="icon">
+                                                                <img src="${pageContext.request.contextPath}/icon/Shop.png"
+                                                                     alt="暂无店铺"
+                                                                     style="width: 64px; height: 64px;">
+                                                            </div>
+                                                            <h3>暂无店铺</h3>
+                                                            <p>您还没有创建任何店铺，请先申请商家入驻</p>
+                                                            <a href="${pageContext.request.contextPath}/ProfileServlet"
+                                                               class="btn btn-primary">
+                                                                前往申请入驻
+                                                            </a>
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
                             </div>
                         </div>
 
