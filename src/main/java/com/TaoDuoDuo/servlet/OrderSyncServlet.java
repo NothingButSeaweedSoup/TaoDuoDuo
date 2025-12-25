@@ -44,10 +44,10 @@ public class OrderSyncServlet extends HttpServlet {
         if ("sync".equals(action)) {
             if (orderIdStr != null) {
                 // 同步单个订单
-                syncSingleOrder(Integer.parseInt(orderIdStr), out);
+                syncSingleOrder(request, Integer.parseInt(orderIdStr), out);
             } else {
                 // 同步所有未支付订单
-                syncAllUnpaidOrders(out);
+                syncAllUnpaidOrders(request, out);
             }
         }
 
@@ -74,7 +74,7 @@ public class OrderSyncServlet extends HttpServlet {
     /**
      * 同步单个订单状态
      */
-    private void syncSingleOrder(int orderId, PrintWriter out) {
+    private void syncSingleOrder(HttpServletRequest request, int orderId, PrintWriter out) {
         try {
             Optional<Order> orderOpt = orderDao.getOrderById(orderId);
             if (!orderOpt.isPresent()) {
@@ -120,16 +120,21 @@ public class OrderSyncServlet extends HttpServlet {
 
                     boolean updated = orderDao.updateOrder(order);
                     if (updated) {
-                        out.println("<p style='color: green;'><img src='" + request.getContextPath() + "/icon/Success.png' alt='成功' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态已更新: " + order.getOrder_status() + " → " + newStatus
+                        out.println("<p style='color: green;'><img src='" + request.getContextPath()
+                                + "/icon/Success.png' alt='成功' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态已更新: "
+                                + order.getOrder_status() + " → " + newStatus
                                 + "</p>");
                     } else {
-                        out.println("<p style='color: red;'><img src='" + request.getContextPath() + "/icon/Error.png' alt='错误' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态更新失败</p>");
+                        out.println("<p style='color: red;'><img src='" + request.getContextPath()
+                                + "/icon/Error.png' alt='错误' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态更新失败</p>");
                     }
                 } else {
-                    out.println("<p style='color: blue;'><img src='" + request.getContextPath() + "/icon/Success.png' alt='信息' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态无需更新</p>");
+                    out.println("<p style='color: blue;'><img src='" + request.getContextPath()
+                            + "/icon/Success.png' alt='信息' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 订单状态无需更新</p>");
                 }
             } else {
-                out.println("<p style='color: red;'><img src='" + request.getContextPath() + "/icon/Error.png' alt='错误' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 查询支付宝订单失败</p>");
+                out.println("<p style='color: red;'><img src='" + request.getContextPath()
+                        + "/icon/Error.png' alt='错误' style='width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;'> 查询支付宝订单失败</p>");
             }
 
         } catch (Exception e) {
@@ -141,7 +146,7 @@ public class OrderSyncServlet extends HttpServlet {
     /**
      * 同步所有未支付订单
      */
-    private void syncAllUnpaidOrders(PrintWriter out) {
+    private void syncAllUnpaidOrders(HttpServletRequest request, PrintWriter out) {
         try {
             out.println("<h4>同步所有未支付订单</h4>");
 
