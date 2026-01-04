@@ -38,7 +38,6 @@
 INSERT INTO user_role (user_id, role_id) VALUES (1, 3);
 ```
 
-或者执行 `admin_setup.sql` 脚本。
 
 ## 数据库触发器
 
