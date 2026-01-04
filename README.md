@@ -54,7 +54,7 @@ web/
 ```
 
 ## 部署
-修改alipay.properties文件，将支付宝的app_id、private_key、public_key替换为自己的。
-开启内网穿透，将alipay.notify.url和alipay.return.url内的链接替换为内网穿透后的链接。（调用支付宝接口时需要使用公网地址）
-修改db.properties文件，将数据库的连接信息替换为自己的。
-运行tdd_db.sql文件，创建数据库和表。
+- 修改alipay.properties文件，将支付宝的app_id、private_key、public_key替换为自己的。
+- 开启内网穿透，将alipay.notify.url和alipay.return.url内的链接替换为内网穿透后的链接。（调用支付宝接口时需要使用公网地址）
+- 修改db.properties文件，将数据库的连接信息替换为自己的。
+- 运行tdd_db.sql文件，创建数据库和表。
