@@ -335,9 +335,10 @@
                                                         onclick="editShop(${shop.shop_id}, '${shop.shop_name}')">
                                                         编辑
                                                     </button>
-                                                    <a href="${pageContext.request.contextPath}/ShopDetailServlet?shopId=${shop.shop_id}"
+                                                    <a href="${pageContext.request.contextPath}/AdminShopDetailServlet?shopId=${shop.shop_id}"
                                                         class="btn btn-secondary" target="_blank">
-                                                        查看
+                                                        查看详情
+                                                    </a>
                                                     </a>
                                                     <button class="btn btn-danger"
                                                         onclick="deleteShop(${shop.shop_id}, '${shop.shop_name}')">

@@ -311,9 +311,10 @@
                                                 <td>${user.create_time}</td>
                                                 <td>${user.update_time}</td>
                                                 <td class="actions-cell">
-                                                    <a href="${pageContext.request.contextPath}/ProfileServlet?userId=${user.user_id}"
+                                                    <a href="${pageContext.request.contextPath}/AdminUserDetailServlet?userId=${user.user_id}"
                                                         class="btn btn-secondary" target="_blank">
-                                                        查看
+                                                        查看详情
+                                                    </a>
                                                     </a>
                                                     <button class="btn btn-danger"
                                                         onclick="deleteUser(${user.user_id}, '${user.username}')">

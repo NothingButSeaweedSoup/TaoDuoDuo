@@ -314,7 +314,7 @@
                                                 <td>${order.create_time}</td>
                                                 <td>${order.update_time}</td>
                                                 <td class="actions-cell">
-                                                    <a href="${pageContext.request.contextPath}/OrderDetailServlet?orderId=${order.order_id}"
+                                                    <a href="${pageContext.request.contextPath}/AdminOrderDetailServlet?orderId=${order.order_id}"
                                                         class="btn btn-secondary" target="_blank">
                                                         查看详情
                                                     </a>
