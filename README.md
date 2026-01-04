@@ -38,14 +38,6 @@
 INSERT INTO user_role (user_id, role_id) VALUES (1, 3);
 ```
 
-
-## 数据库触发器
-
-项目包含级联删除触发器，执行 `emergency_fix_triggers.sql` 来设置：
-- 删除订单时自动删除订单详情
-- 删除商品时自动删除相关数据
-- 删除商铺时自动删除相关商品
-
 ## 项目结构
 ```
 src/main/java/com/TaoDuoDuo/
@@ -60,3 +52,9 @@ web/
 ├── icon/         # 图标资源
 └── images/       # 图片资源
 ```
+
+## 部署
+修改alipay.properties文件，将支付宝的app_id、private_key、public_key替换为自己的。
+开启内网穿透，将alipay.notify.url和alipay.return.url内的链接替换为内网穿透后的链接。（调用支付宝接口时需要使用公网地址）
+修改db.properties文件，将数据库的连接信息替换为自己的。
+运行tdd_db.sql文件，创建数据库和表。
