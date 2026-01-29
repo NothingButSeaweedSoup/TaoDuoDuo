@@ -36,3 +36,14 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### 敏感配置文件 ###
+# 数据库配置
+src/main/resources/db.properties
+
+# 支付宝配置
+src/main/resources/alipay.properties
+
+# 其他可能包含敏感信息的配置文件
+*.properties
+!*.properties.example

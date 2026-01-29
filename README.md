@@ -53,8 +53,34 @@ web/
 └── images/       # 图片资源
 ```
 
+## 环境配置
+
+### 数据库配置
+1. 复制 `src/main/resources/db.properties.example` 为 `src/main/resources/db.properties`
+2. 修改数据库连接信息：
+   ```properties
+   db.url=jdbc:mysql://localhost:3306/your_database_name?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+   db.user=your_username
+   db.password=your_password
+   ```
+3. 运行 `src/main/resources/tdd_db.sql` 创建数据库和表
+
+### 支付宝沙箱配置
+1. 复制 `src/main/resources/alipay.properties.example` 为 `src/main/resources/alipay.properties`
+2. 在[支付宝开放平台](https://open.alipay.com/)申请沙箱应用
+3. 修改支付宝配置信息：
+   ```properties
+   alipay.app.id=你的应用ID
+   alipay.app.private.key=你的应用私钥
+   alipay.public.key=支付宝公钥
+   alipay.notify.url=http://你的域名:端口/TaoDuoDuo_war_exploded/notify
+   alipay.return.url=http://你的域名:端口/TaoDuoDuo_war_exploded/toSuccess.jsp
+   ```
+4. 如需测试支付功能，请配置内网穿透工具（如ngrok）获取公网地址
+
+### 注意事项
+- 配置文件包含敏感信息，请勿提交到版本控制系统
+- 生产环境请使用正式的支付宝应用配置
+- 确保数据库用户具有足够的权限
+
 ## 部署
-- 修改alipay.properties文件，将支付宝的app_id、private_key、public_key替换为自己的。
-- 开启内网穿透，将alipay.notify.url和alipay.return.url内的链接替换为内网穿透后的链接。（调用支付宝接口时需要使用公网地址）
-- 修改db.properties文件，将数据库的连接信息替换为自己的。
-- 运行tdd_db.sql文件，创建数据库和表。
