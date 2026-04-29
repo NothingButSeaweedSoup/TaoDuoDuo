@@ -1,0 +1,26 @@
+# 支付宝沙箱配置示例文件
+# 请复制此文件为 alipay.properties 并填入真实的配置信息
+
+# 支付宝应用ID
+alipay.app.id=YOUR_APP_ID
+
+# 应用私钥（请替换为您的实际私钥）
+alipay.app.private.key=YOUR_PRIVATE_KEY
+
+# 支付宝公钥（请替换为您的实际公钥）
+alipay.public.key=YOUR_ALIPAY_PUBLIC_KEY
+
+# 异步通知URL（请替换为您的实际域名和端口）
+alipay.notify.url=http://YOUR_DOMAIN:YOUR_PORT/TaoDuoDuo_war_exploded/notify
+
+# 同步返回URL（请替换为您的实际域名和端口）
+alipay.return.url=http://YOUR_DOMAIN:YOUR_PORT/TaoDuoDuo_war_exploded/toSuccess.jsp
+
+# 支付宝网关地址（沙箱环境）
+alipay.gateway.host=openapi-sandbox.dl.alipaydev.com
+
+# 协议
+alipay.protocol=https
+
+# 签名类型
+alipay.sign.type=RSA2
